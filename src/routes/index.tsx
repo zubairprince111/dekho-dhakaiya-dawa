@@ -1,26 +1,26 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { AppShell } from "@/components/AppShell";
+import { LocalRadar } from "@/components/LocalRadar";
+import { ReviewCard } from "@/components/ReviewCard";
+import { reviews } from "@/lib/dummy-data";
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "দেখো — জগাখিচুড়ি ফিড" },
+      { name: "description", content: "বাংলাদেশের প্রতিদিনের বাঁশ-কাহিনী ও সিন্ডিকেট রিভিউ।" },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. For sites with multiple pages (About, Services, Contact, etc.),
-// create separate route files (about.tsx, services.tsx, contact.tsx) — don't put all pages in this file.
-function PlaceholderIndex() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
-}
-
 function Index() {
-  return <PlaceholderIndex />;
+  return (
+    <AppShell>
+      <LocalRadar />
+      {reviews.map((r) => (
+        <ReviewCard key={r.id} review={r} />
+      ))}
+    </AppShell>
+  );
 }
