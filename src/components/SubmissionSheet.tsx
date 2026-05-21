@@ -21,6 +21,32 @@ export function SubmissionSheetProvider({ children }: { children: ReactNode }) {
   );
 }
 
+const WHO_OPTIONS: Record<"gov" | "syndicate", string[]> = {
+  gov: [
+    "বড় স্যার (ফাইনাল সাইন)",
+    "পিয়ন ভাই (ফাইল পুশার)",
+    "দালাল মামা (বাইরের কন্ট্রাক্ট)",
+    "গেটের দারোয়ান (এন্ট্রি ফি)",
+    "কম্পিউটার অপারেটর (টাইপিং চার্জ)",
+    "ডিউটি অফিসার (জিডির খরচ)",
+    "রেকর্ড কিপার (পুরানো ফাইল খোঁজা)",
+  ],
+  syndicate: [
+    "বাসের কন্টাক্টর (ঈদের স্পেশাল)",
+    "সিএনজি মামা (বৃষ্টি-ট্যাক্স)",
+    "কাঁচাবাজারের আড়তদার (সিন্ডিকেট)",
+    "কসাই ভাই (হাড্ডি স্পেশালিস্ট)",
+    "লাইনম্যান (স্ট্যান্ড চাঁদা)",
+    "ওয়ার্ড বয় (ট্রলি ভাড়া)",
+    "ফুটপাতের নেতা (দোকান ভাড়া)",
+    "ট্রাফিক মামা (রাস্তার ফাইন)",
+  ],
+};
+const OTHER_OPTIONS = [
+  "অচেনা এক ভাই (নাম জানি না)",
+  "সিস্টেমের ভূত (সবাই খাইসে)",
+];
+
 function SubmissionSheet() {
   const { isOpen, close } = useSubmissionSheet();
   const [category, setCategory] = useState<"gov" | "syndicate">("gov");
@@ -88,14 +114,25 @@ function SubmissionSheet() {
                 <div className="space-y-2">
                   {combos.map((c, i) => (
                     <div key={i} className="grid grid-cols-2 gap-2">
-                      <input
+                      <select
                         value={c.who}
                         onChange={(e) => {
                           const v = [...combos]; v[i].who = e.target.value; setCombos(v);
                         }}
-                        placeholder="কার পকেটে গেলো?"
-                        className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-3 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-[#00BCD4]"
-                      />
+                        className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-3 text-sm text-gray-800 focus:outline-none focus:ring-1 focus:ring-[#00BCD4]"
+                      >
+                        <option value="">কার পকেটে গেলো?</option>
+                        <optgroup label={category === "gov" ? "🏛️ সরকারি দফতর" : "🚌 লোকাল সিন্ডিকেট"}>
+                          {WHO_OPTIONS[category].map((o) => (
+                            <option key={o} value={o}>{o}</option>
+                          ))}
+                        </optgroup>
+                        <optgroup label="❓ অন্যান্য">
+                          {OTHER_OPTIONS.map((o) => (
+                            <option key={o} value={o}>{o}</option>
+                          ))}
+                        </optgroup>
+                      </select>
                       <input
                         value={c.amount}
                         onChange={(e) => {
