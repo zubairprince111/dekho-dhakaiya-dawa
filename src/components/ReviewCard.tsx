@@ -35,7 +35,7 @@ export function ReviewCard({ review }: { review: Review }) {
         <Avatar seed={review.author} />
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold text-gray-800">{review.author}</p>
-          <p className="truncate text-xs text-gray-500">
+          <p className="truncate text-xs text-gray-500 leading-normal py-0.5">
             {review.location} • {review.timeAgo}
           </p>
         </div>
@@ -68,7 +68,7 @@ export function ReviewCard({ review }: { review: Review }) {
           </div>
         ))}
         <div className="mt-3 flex items-baseline justify-between border-t border-gray-300 pt-3">
-          <span className="text-sm font-bold text-[#E91E63]">সর্বমোট বাঁশ</span>
+          <span className="text-sm font-bold text-[#E91E63]">সর্বমোট কোপ</span>
           <span className="text-base font-extrabold text-[#E91E63] tabular-nums">
             {review.total.toLocaleString("bn-BD")} ৳
           </span>
@@ -78,7 +78,7 @@ export function ReviewCard({ review }: { review: Review }) {
       <p className="text-[15px] leading-relaxed text-gray-700">{review.story}</p>
 
       <div className="mt-4 flex items-center justify-between gap-2 border-t border-gray-100 pt-3">
-        <ActionBtn icon={<Laugh size={18} strokeWidth={1.8} />} label="সেই লেভেলের বাঁশ!" count={review.laughs} />
+        <ActionBtn icon={<Laugh size={18} strokeWidth={1.8} />} label="সেই লেভেলের কোপ!" count={review.laughs} />
         <ActionBtn icon={<Handshake size={18} strokeWidth={1.8} />} label="সেম টু সেম" count={review.sames} />
         <ActionBtn icon={<TriangleAlert size={18} strokeWidth={1.8} />} label="চাপাবাজি!" count={review.caps} />
       </div>

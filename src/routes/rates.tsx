@@ -51,7 +51,7 @@ function RateRow({ item }: { item: (typeof rates)[number] }) {
       >
         <div className="flex items-center gap-2">
           <span className="text-lg font-extrabold tabular-nums text-gray-800">
-            গড় বাঁশ: {item.avgPrice.toLocaleString("bn-BD")} ৳
+            গড় কোপ: {item.avgPrice.toLocaleString("bn-BD")} ৳
           </span>
           <Icon size={18} color={trendColor} strokeWidth={2.4} />
         </div>

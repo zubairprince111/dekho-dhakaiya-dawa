@@ -1,11 +1,10 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Home, Trophy, BarChart3, Feather } from "lucide-react";
+import { Home, Trophy, Feather } from "lucide-react";
 import { useSubmissionSheet } from "./SubmissionSheet";
 
 const items = [
   { to: "/", label: "জগাখিচুড়ি", Icon: Home },
   { to: "/leaderboard", label: "সেরা ধান্দাবাজ", Icon: Trophy },
-  { to: "/rates", label: "আজকের বাজার", Icon: BarChart3 },
 ] as const;
 
 export function BottomNav() {
@@ -13,8 +12,8 @@ export function BottomNav() {
   const { open } = useSubmissionSheet();
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-100 bg-white/80 backdrop-blur-xl">
-      <div className="relative grid grid-cols-[1fr_1fr_auto_1fr_1fr] items-end justify-between px-4 pb-safe pt-2">
-        {items.slice(0, 2).map(({ to, label, Icon }) => {
+      <div className="relative grid grid-cols-[1fr_auto_1fr] items-end justify-between px-4 pb-safe pt-2">
+        {items.slice(0, 1).map(({ to, label, Icon }) => {
           const active = pathname === to;
           return (
             <NavLink key={to} to={to} label={label} Icon={Icon} active={active} />
@@ -33,13 +32,12 @@ export function BottomNav() {
           <span className="mt-1 text-[10px] font-semibold text-gray-700">খুইলা কন</span>
         </div>
 
-        {items.slice(2).map(({ to, label, Icon }) => {
+        {items.slice(1, 2).map(({ to, label, Icon }) => {
           const active = pathname === to;
           return (
             <NavLink key={to} to={to} label={label} Icon={Icon} active={active} />
           );
         })}
-        <div />
       </div>
     </nav>
   );

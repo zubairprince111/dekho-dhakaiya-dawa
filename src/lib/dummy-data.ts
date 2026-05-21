@@ -47,10 +47,10 @@ export const reviews: Review[] = [
     location: "বিআরটিএ মিরপুর",
     timeAgo: "৫ ঘণ্টা আগে",
     rating: 4,
-    ratingLabel: "ভালোই বাঁশ",
+    ratingLabel: "ভালোই কোপ",
     category: "সরকারি দফতর",
     items: [
-      { label: "দালাল কমিশন", amount: 1500 },
+      { label: "দালাল commission", amount: 1500 },
       { label: "ফিটনেস 'পাশ'", amount: 3000 },
       { label: "ইন্সপেক্টর সাহেব", amount: 2000 },
     ],
@@ -60,25 +60,6 @@ export const reviews: Review[] = [
     laughs: 412,
     sames: 156,
     caps: 8,
-  },
-  {
-    id: "3",
-    author: "ফার্মগেটের ফেলুদা",
-    location: "লোকাল বাস সিন্ডিকেট",
-    timeAgo: "১ দিন আগে",
-    rating: 3,
-    ratingLabel: "মাঝারি বাঁশ",
-    category: "লোকাল সিন্ডিকেট",
-    items: [
-      { label: "অতিরিক্ত ভাড়া", amount: 50 },
-      { label: "হেল্পারের 'টিপস'", amount: 20 },
-    ],
-    total: 70,
-    story:
-      "১৫ টাকার ভাড়া ৩৫ নিল। কইলাম 'মামা এত কেন?' - উত্তর 'তেলের দাম বাড়সে মামা।' তেল কি স্বর্ণ হইয়া গেসে?",
-    laughs: 89,
-    sames: 567,
-    caps: 23,
   },
 ];
 
@@ -94,7 +75,7 @@ export const rates: RateItem[] = [
   { service: "ড্রাইভিং লাইসেন্স", location: "বিআরটিএ", avgPrice: 5000, trend: "up" },
   { service: "জমির নামজারি", location: "সাব-রেজিস্ট্রি", avgPrice: 15000, trend: "same" },
   { service: "ট্রেড লাইসেন্স রিনিউ", location: "সিটি কর্পোরেশন", avgPrice: 4500, trend: "down" },
-  { service: "বাস ছাদে ওঠার রেট", location: "গাবতলী", avgPrice: 500, trend: "up" },
+  { service: "জন্ম নিবন্ধন সনদ", location: "সিটি কর্পোরেশন", avgPrice: 800, trend: "up" },
 ];
 
 export interface Leader {
@@ -107,16 +88,16 @@ export interface Leader {
 
 export const leaders: Leader[] = [
   { rank: 1, name: "বিআরটিএ মিরপুর", cases: 234, totalDamage: 1240000, badge: "ধান্দা সম্রাট" },
-  { rank: 2, name: "গুলশান সাব-রেজিস্ট্রি", cases: 189, totalDamage: 980000, badge: "বাঁশ মাস্টার" },
-  { rank: 3, name: "গাবতলী বাস টার্মিনাল", cases: 156, totalDamage: 450000, badge: "সিন্ডিকেট কিং" },
+  { rank: 2, name: "গুলশান সাব-রেজিস্ট্রি", cases: 189, totalDamage: 980000, badge: "কোপ মাস্টার" },
+  { rank: 3, name: "ওয়াসা কারওয়ান বাজার", cases: 156, totalDamage: 450000, badge: "বিল সম্রাট" },
   { rank: 4, name: "ঢাকা পাসপোর্ট অফিস", cases: 134, totalDamage: 670000, badge: "চিপা চ্যাম্প" },
   { rank: 5, name: "তেজগাঁও থানা", cases: 98, totalDamage: 320000, badge: "নবাগত ধান্দাবাজ" },
 ];
 
 export const tickerItems = [
-  "গাবতলীতে বাসের ছাদে উঠার রেট ৫০০ ৳",
-  "মিরপুর বিআরটিএ: আজকে ৪ জন দালালকে মাখন সার্ভিস দেওয়া হইসে",
-  "গুলশান সাব-রেজিস্ট্রি: ফাইল মুভমেন্ট ফি বাড়সে ১৫%",
-  "পুরান ঢাকায় ট্রেড লাইসেন্স রেট কমসে",
-  "ফার্মগেটে লেগুনা সিন্ডিকেট: ভাড়া ডাবল",
+  "ওয়াসা: পানির লাইনের নতুন সংযোগ ফি বাড়সে",
+  "মিরপুর বিআরটিএ: আজকে ৪ জন দালালকে মাখন সার্ভিস দেওয়া হইসে",
+  "গুলশান সাব-রেজিস্ট্রি: ফাইল মুভমেন্ট ফি বাড়সে ১৫%",
+  "পুরান ঢাকায় ট্রেড লাইসেন্স রেট কমসে",
+  "ভূমি অফিসে নতুন নামজারি ফি দ্বিগুণ",
 ];

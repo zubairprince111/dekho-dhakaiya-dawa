@@ -2,10 +2,22 @@
 @source "../src";
 @import "tw-animate-css";
 
+@font-face {
+  font-family: "BengaliDigits";
+  src: local("Segoe UI Historic"),
+       local("Noto Sans Bengali"),
+       local("Kohinoor Bangla"),
+       local("Bangla MN"),
+       local("Bangla Sangam MN"),
+       local("Vrinda"),
+       local("SolaimanLipi");
+  unicode-range: U+09E6-09EF;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: "Hind Siliguri", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "BengaliDigits", "Hind Siliguri", ui-sans-serif, system-ui, sans-serif;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -63,7 +75,7 @@
   html, body {
     background-color: #FAF8F5;
     color: var(--color-foreground);
-    font-family: "Hind Siliguri", ui-sans-serif, system-ui, sans-serif;
+    font-family: "BengaliDigits", "Hind Siliguri", ui-sans-serif, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
 }
