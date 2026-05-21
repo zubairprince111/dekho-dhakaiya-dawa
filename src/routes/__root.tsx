@@ -80,8 +80,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "ক্রাউডসোর্সড কোপ-কাহিনী ও সরকারি দফতর রিভিউ।" },
       { property: "og:title", content: "দেখো — Dekhoo" },
       { property: "og:description", content: "বাংলাদেশের প্রতিদিনের ধান্দাবাজির হিসাব।" },
+      { property: "og:image", content: "/money.gif" },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "/money.gif" },
     ],
     links: [
       { rel: "icon", type: "image/jpeg", href: "/favicon.jpeg" },
