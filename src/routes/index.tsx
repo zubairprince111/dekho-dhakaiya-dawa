@@ -2,9 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { LocalRadar } from "@/components/LocalRadar";
 import { ReviewCard } from "@/components/ReviewCard";
-import { reviews as mockReviews } from "@/lib/dummy-data";
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -21,6 +20,11 @@ function Index() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!isSupabaseConfigured) {
+      setLoading(false);
+      return;
+    }
+
     async function fetchReports() {
       try {
         const { data, error } = await supabase
@@ -29,8 +33,8 @@ function Index() {
           .order("id", { ascending: false });
 
         if (error) {
-          console.warn("Supabase fetch failed, falling back to mock data.", error);
-          setReports(mockReviews);
+          console.error("Supabase fetch failed", error);
+          setReports([]);
         } else if (data && data.length > 0) {
           const mapped = data.map((item: any, index: number) => {
             const timeAgo = item.created_at
@@ -64,9 +68,7 @@ function Index() {
               items: formattedItems,
               total: item.totalAmount || 0,
               story: item.comments || "",
-              laughs: item.laughs !== undefined ? item.laughs : Math.floor(Math.random() * 50) + 5,
-              sames: item.sames !== undefined ? item.sames : Math.floor(Math.random() * 30) + 2,
-              caps: item.caps !== undefined ? item.caps : Math.floor(Math.random() * 5),
+              sames: item.sames !== undefined ? item.sames : 0,
             };
           });
           setReports(mapped);
@@ -74,8 +76,8 @@ function Index() {
           setReports([]);
         }
       } catch (err) {
-        console.warn("Error fetching Supabase data, using mock data", err);
-        setReports(mockReviews);
+        console.error("Error fetching Supabase data", err);
+        setReports([]);
       } finally {
         setLoading(false);
       }
@@ -85,9 +87,15 @@ function Index() {
 
   return (
     <AppShell>
-      <LocalRadar reports={reports} />
+      {isSupabaseConfigured && <LocalRadar reports={reports} />}
 
-      {loading ? (
+      {!isSupabaseConfigured ? (
+        <div className="mx-4 mt-6 flex flex-col items-center justify-center rounded-3xl border border-amber-200 bg-amber-50/50 p-8 text-center shadow-sm animate-in fade-in duration-200">
+          <div className="text-4xl mb-3">💸</div>
+          <h3 className="text-base font-extrabold text-amber-800 leading-normal py-0.5">ফাইলের নিচে চাকা লাগান নাই মামা!</h3>
+          <p className="mt-1 text-xs text-amber-700 leading-normal py-0.5 font-bold">ওস্তাদ, চা-পানি (ডাটাবেজ কানেকশন) না খাওয়াইলে কি খাতা খুলবো? আগে পিছন দিয়া কিছু গুঁইজা দ্যান!</p>
+        </div>
+      ) : loading ? (
         <div className="flex flex-col items-center justify-center py-12 space-y-3">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#00BCD4] border-t-transparent" />
           <p className="text-sm font-bold text-gray-500">রাডার ঘুরতেসে... ডেটা লোড হচ্ছে 📡</p>

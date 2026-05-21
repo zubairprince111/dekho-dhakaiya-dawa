@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
-export const Route = createFileRoute("/leaderboard")({
+export const Route = createFileRoute("/halkhata")({
   head: () => ({
     meta: [
       { title: "কোথায় কত কোপ — দেখো" },
@@ -12,27 +12,6 @@ export const Route = createFileRoute("/leaderboard")({
   }),
   component: LB,
 });
-
-// Simulated Database Entries for local fallback
-const MOCK_SUBMISSIONS = [
-  { id: 1, office: "বিআরটিএ মিরপুর", amount: 15000 },
-  { id: 2, office: "বিআরটিএ মিরপুর", amount: 22000 },
-  { id: 3, office: "গুলশান সাব-রেজিস্ট্রি", amount: 45000 },
-  { id: 4, office: "ওয়াসা কারওয়ান বাজার", amount: 9500 },
-  { id: 5, office: "ঢাকা পাসপোর্ট অফিস", amount: 8000 },
-  { id: 6, office: "তেজগাঁও থানা", amount: 30000 },
-  { id: 7, office: "বিআরটিএ মিরপুর", amount: 18000 },
-  { id: 8, office: "গুলশান সাব-রেজিস্ট্রি", amount: 55000 },
-  { id: 9, office: "ওয়াসা কারওয়ান বাজার", amount: 11000 },
-  { id: 10, office: "ঢাকা পাসপোর্ট অফিস", amount: 12000 },
-  { id: 11, office: "তেজগাঁও থানা", amount: 25000 },
-  { id: 12, office: "গুলশান সাব-রেজিস্ট্রি", amount: 60000 },
-  { id: 13, office: "ওয়াসা কারওয়ান বাজার", amount: 7500 },
-  { id: 14, office: "ঢাকা পাসপোর্ট অফিস", amount: 10000 },
-  { id: 15, office: "তেজগাঁও থানা", amount: 20000 },
-  { id: 16, office: "বিআরটিএ মিরপুর", amount: 25000 },
-  { id: 17, office: "গুলশান সাব-রেজিস্ট্রি", amount: 35000 },
-];
 
 // Interactive requestAnimationFrame CountUp component
 function CountUp({ end, duration = 1.2, formatter }: { end: number; duration?: number; formatter?: (val: number) => string }) {
@@ -59,6 +38,12 @@ function LB() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!isSupabaseConfigured) {
+      setSubmissions([]);
+      setLoading(false);
+      return;
+    }
+
     async function fetchSubmissions() {
       try {
         const { data, error } = await supabase
@@ -66,25 +51,16 @@ function LB() {
           .select("*");
 
         if (error) {
-          console.warn("Supabase fetch failed in leaderboard, falling back to mock data.", error);
-          setSubmissions(MOCK_SUBMISSIONS.map((s) => ({
-            id: s.id,
-            officeName: s.office,
-            totalAmount: s.amount,
-          })));
+          console.error("Supabase fetch failed in leaderboard", error);
+          setSubmissions([]);
         } else if (data && data.length > 0) {
           setSubmissions(data);
         } else {
-          // Empty state
           setSubmissions([]);
         }
       } catch (err) {
-        console.warn("Error in leaderboard live fetch, using mock data", err);
-        setSubmissions(MOCK_SUBMISSIONS.map((s) => ({
-          id: s.id,
-          officeName: s.office,
-          totalAmount: s.amount,
-        })));
+        console.error("Error in leaderboard live fetch", err);
+        setSubmissions([]);
       } finally {
         setLoading(false);
       }
@@ -120,7 +96,13 @@ function LB() {
 
   return (
     <AppShell>
-      {loading ? (
+      {!isSupabaseConfigured ? (
+        <div className="mx-4 mt-6 flex flex-col items-center justify-center rounded-3xl border border-amber-200 bg-amber-50/50 p-8 text-center shadow-sm animate-in fade-in duration-200">
+          <div className="text-4xl mb-3">🤝</div>
+          <h3 className="text-base font-extrabold text-amber-800 leading-normal py-0.5">সব ধান্দাবাজ হাওয়া হয়া গেছে!</h3>
+          <p className="mt-1 text-xs text-amber-700 leading-normal py-0.5 font-bold">ওস্তাদ, ধান্দাবাজদের খাতা (ডাটাবেজ কানেকশন) রেডি নাই! আগে পিছনে কিছু চালান করেন, খাতা সচল হবে!</p>
+        </div>
+      ) : loading ? (
         <div className="flex flex-col items-center justify-center py-24 space-y-3">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#00BCD4] border-t-transparent" />
           <p className="text-sm font-bold text-gray-500 leading-normal py-0.5">রাডার ঘুরতেসে... ড্যাশবোর্ড আপডেট হচ্ছে 📡</p>

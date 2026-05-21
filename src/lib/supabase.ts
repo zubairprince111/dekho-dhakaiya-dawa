@@ -11,12 +11,26 @@ const supabaseAnonKey =
   (typeof process !== "undefined" && process.env?.NEXT_PUBLIC_SUPABASE_ANON_KEY) ||
   "";
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn("⚠️ Supabase API keys are missing. Using placeholder keys and falling back to mock/local data query paths.");
+// Detect if keys are missing, are placeholders, or have invalid formats
+const isPlaceholder = (url: string, key: string) => {
+  return (
+    !url ||
+    !key ||
+    url.includes("your-supabase-project-url-here") ||
+    key.includes("your-supabase-anon-key-here") ||
+    !url.startsWith("https://")
+  );
+};
+
+export const isSupabaseConfigured = !isPlaceholder(supabaseUrl, supabaseAnonKey);
+
+if (!isSupabaseConfigured) {
+  console.warn("⚠️ Supabase API keys are missing or contain placeholder values. Falling back to mock/local data query paths.");
 }
 
 // Use valid placeholder URLs to prevent Supabase JS SDK client creation errors
-const finalUrl = supabaseUrl || "https://placeholder-project-dummy-url.supabase.co";
-const finalAnonKey = supabaseAnonKey || "placeholder-anon-key-dummy-string";
+const finalUrl = isSupabaseConfigured ? supabaseUrl : "https://placeholder-project-dummy-url.supabase.co";
+const finalAnonKey = isSupabaseConfigured ? supabaseAnonKey : "placeholder-anon-key-dummy-string";
 
 export const supabase = createClient(finalUrl, finalAnonKey);
+

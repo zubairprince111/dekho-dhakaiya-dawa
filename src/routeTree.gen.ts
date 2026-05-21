@@ -11,8 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RatesRouteImport } from './routes/rates'
 import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as LeaderboardRouteImport } from './routes/leaderboard'
+import { Route as HalkhataRouteImport } from './routes/halkhata'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiSubmitReportRouteImport } from './routes/api.submit-report'
 
 const RatesRoute = RatesRouteImport.update({
   id: '/rates',
@@ -24,9 +25,9 @@ const PrivacyRoute = PrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LeaderboardRoute = LeaderboardRouteImport.update({
-  id: '/leaderboard',
-  path: '/leaderboard',
+const HalkhataRoute = HalkhataRouteImport.update({
+  id: '/halkhata',
+  path: '/halkhata',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -34,39 +35,54 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiSubmitReportRoute = ApiSubmitReportRouteImport.update({
+  id: '/api/submit-report',
+  path: '/api/submit-report',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/leaderboard': typeof LeaderboardRoute
+  '/halkhata': typeof HalkhataRoute
   '/privacy': typeof PrivacyRoute
   '/rates': typeof RatesRoute
+  '/api/submit-report': typeof ApiSubmitReportRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/leaderboard': typeof LeaderboardRoute
+  '/halkhata': typeof HalkhataRoute
   '/privacy': typeof PrivacyRoute
   '/rates': typeof RatesRoute
+  '/api/submit-report': typeof ApiSubmitReportRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/leaderboard': typeof LeaderboardRoute
+  '/halkhata': typeof HalkhataRoute
   '/privacy': typeof PrivacyRoute
   '/rates': typeof RatesRoute
+  '/api/submit-report': typeof ApiSubmitReportRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/leaderboard' | '/privacy' | '/rates'
+  fullPaths: '/' | '/halkhata' | '/privacy' | '/rates' | '/api/submit-report'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/leaderboard' | '/privacy' | '/rates'
-  id: '__root__' | '/' | '/leaderboard' | '/privacy' | '/rates'
+  to: '/' | '/halkhata' | '/privacy' | '/rates' | '/api/submit-report'
+  id:
+    | '__root__'
+    | '/'
+    | '/halkhata'
+    | '/privacy'
+    | '/rates'
+    | '/api/submit-report'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  LeaderboardRoute: typeof LeaderboardRoute
+  HalkhataRoute: typeof HalkhataRoute
   PrivacyRoute: typeof PrivacyRoute
   RatesRoute: typeof RatesRoute
+  ApiSubmitReportRoute: typeof ApiSubmitReportRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -85,11 +101,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/leaderboard': {
-      id: '/leaderboard'
-      path: '/leaderboard'
-      fullPath: '/leaderboard'
-      preLoaderRoute: typeof LeaderboardRouteImport
+    '/halkhata': {
+      id: '/halkhata'
+      path: '/halkhata'
+      fullPath: '/halkhata'
+      preLoaderRoute: typeof HalkhataRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -99,14 +115,22 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/submit-report': {
+      id: '/api/submit-report'
+      path: '/api/submit-report'
+      fullPath: '/api/submit-report'
+      preLoaderRoute: typeof ApiSubmitReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  LeaderboardRoute: LeaderboardRoute,
+  HalkhataRoute: HalkhataRoute,
   PrivacyRoute: PrivacyRoute,
   RatesRoute: RatesRoute,
+  ApiSubmitReportRoute: ApiSubmitReportRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

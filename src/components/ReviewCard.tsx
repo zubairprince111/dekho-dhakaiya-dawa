@@ -1,5 +1,8 @@
+import { useState, useEffect } from "react";
+import { Handshake } from "lucide-react";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+import { toast } from "sonner";
 import type { Review } from "@/lib/dummy-data";
-import { Laugh, Handshake, TriangleAlert } from "lucide-react";
 
 function TeaCup({ filled }: { filled: boolean }) {
   return (
@@ -29,6 +32,60 @@ function Avatar({ seed }: { seed: string }) {
 }
 
 export function ReviewCard({ review }: { review: Review }) {
+  const [samesCount, setSamesCount] = useState(review.sames);
+  const [hasVoted, setHasVoted] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
+
+  useEffect(() => {
+    // Check localStorage if the user has already voted on this post
+    const voted = localStorage.getItem(`voted_same_${review.id}`);
+    if (voted === "true") {
+      setHasVoted(true);
+    }
+  }, [review.id]);
+
+  const handleVote = async () => {
+    if (hasVoted) {
+      toast.info("মামা, অলরেডি তো 'us ভাই us' বইলা ফেলছেন! ❤️", {
+        description: "একই পোস্টে বারবার ভোট দেওয়া যাবে না ওস্তাদ।",
+        duration: 3000,
+      });
+      return;
+    }
+
+    try {
+      setIsSyncing(true);
+      
+      // Update state immediately for premium, zero-latency response
+      const newCount = samesCount + 1;
+      setSamesCount(newCount);
+      setHasVoted(true);
+      localStorage.setItem(`voted_same_${review.id}`, "true");
+
+      toast.success("us ভাই us! 🤝", {
+        description: "কোপের অনুভূতি একদম মিইলা গেল মামা!",
+        duration: 3000,
+      });
+
+      // Synchronize with database if configured
+      if (isSupabaseConfigured) {
+        // Attempt to increment the 'sames' column on this record in Supabase
+        const { error } = await supabase
+          .from("bribe_reports")
+          .update({ sames: newCount })
+          .eq("id", review.id);
+
+        if (error) {
+          console.warn("Could not sync vote to Supabase:", error.message);
+        }
+      }
+    } catch (err) {
+      console.warn("Error updating vote:", err);
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
   return (
     <article className="mx-4 mt-4 rounded-3xl border border-gray-100 bg-white p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
       <header className="flex items-center gap-3">
@@ -77,23 +134,48 @@ export function ReviewCard({ review }: { review: Review }) {
 
       <p className="text-[15px] leading-relaxed text-gray-700">{review.story}</p>
 
-      <div className="mt-4 flex items-center justify-between gap-2 border-t border-gray-100 pt-3">
-        <ActionBtn icon={<Laugh size={18} strokeWidth={1.8} />} label="সেই লেভেলের কোপ!" count={review.laughs} />
-        <ActionBtn icon={<Handshake size={18} strokeWidth={1.8} />} label="সেম টু সেম" count={review.sames} />
-        <ActionBtn icon={<TriangleAlert size={18} strokeWidth={1.8} />} label="চাপাবাজি!" count={review.caps} />
+      <div className="mt-4 flex items-center justify-center border-t border-gray-100 pt-3">
+        <ActionBtn
+          icon={<Handshake size={18} strokeWidth={1.8} />}
+          label="us ভাই us"
+          count={samesCount}
+          hasVoted={hasVoted}
+          onClick={handleVote}
+          disabled={isSyncing}
+        />
       </div>
     </article>
   );
 }
 
-function ActionBtn({ icon, label, count }: { icon: React.ReactNode; label: string; count: number }) {
+interface ActionBtnProps {
+  icon: React.ReactNode;
+  label: string;
+  count: number;
+  hasVoted: boolean;
+  onClick: () => void;
+  disabled?: boolean;
+}
+
+function ActionBtn({ icon, label, count, hasVoted, onClick, disabled }: ActionBtnProps) {
   return (
-    <button className="flex flex-1 flex-col items-center gap-1 rounded-xl py-1.5 text-gray-600 active:bg-gray-50 transition">
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 px-4 transition-all duration-200 active:scale-95 cursor-pointer max-w-[140px] ${
+        hasVoted
+          ? "bg-rose-50/75 text-rose-600 font-extrabold shadow-sm border border-rose-100/50"
+          : "text-gray-600 hover:bg-rose-50/20 hover:text-rose-500 border border-transparent"
+      }`}
+    >
       <div className="flex items-center gap-1.5">
-        {icon}
-        <span className="text-xs font-medium tabular-nums">{count}</span>
+        <div className={`transition-transform duration-300 ${hasVoted ? "scale-110 rotate-3 text-rose-500 animate-bounce" : ""}`}>
+          {icon}
+        </div>
+        <span className={`text-xs font-bold tabular-nums ${hasVoted ? "text-rose-600 scale-105" : ""}`}>{count}</span>
       </div>
-      <span className="text-[10px] text-gray-500 leading-tight">{label}</span>
+      <span className="text-[10px] tracking-wide font-extrabold leading-tight">{label}</span>
     </button>
   );
 }
+

@@ -4,7 +4,7 @@ import { Search, X, Sparkles, MapPin } from "lucide-react";
 import { reviews, type Review } from "@/lib/dummy-data";
 import { ReviewCard } from "./ReviewCard";
 import { useSubmissionSheet } from "./SubmissionSheet";
-import { supabase } from "@/lib/supabase";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
 type SearchCtxType = {
   isOpen: boolean;
@@ -58,7 +58,7 @@ function SearchOverlay() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
   const [selectedOffice, setSelectedOffice] = useState<Review | null>(null);
-  const [liveReviews, setLiveReviews] = useState<Review[]>(reviews);
+  const [liveReviews, setLiveReviews] = useState<Review[]>([]);
 
   // Autofocus the input when the overlay opens
   useEffect(() => {
@@ -72,7 +72,7 @@ function SearchOverlay() {
 
   // Load live reports from Supabase when search overlay is active
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && isSupabaseConfigured) {
       async function loadLiveReviews() {
         try {
           const { data, error } = await supabase
@@ -111,9 +111,7 @@ function SearchOverlay() {
                 items: formattedItems,
                 total: item.totalAmount || 0,
                 story: item.comments || "",
-                laughs: item.laughs !== undefined ? item.laughs : Math.floor(Math.random() * 50) + 5,
                 sames: item.sames !== undefined ? item.sames : Math.floor(Math.random() * 30) + 2,
-                caps: item.caps !== undefined ? item.caps : Math.floor(Math.random() * 5),
               };
             });
             setLiveReviews(mapped);

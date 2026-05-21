@@ -14,9 +14,7 @@ export interface Review {
   items: ReceiptItem[];
   total: number;
   story: string;
-  laughs: number;
   sames: number;
-  caps: number;
 }
 
 export const reviews: Review[] = [
@@ -27,7 +25,7 @@ export const reviews: Review[] = [
     timeAgo: "২ ঘণ্টা আগে",
     rating: 5,
     ratingLabel: "একদম মাখন!",
-    category: "সরকারি দফতর",
+    category: "सरकारी দফতর",
     items: [
       { label: "দালাল মামা", amount: 1000 },
       { label: "ফাইল মুভমেন্ট ফি", amount: 2500 },
@@ -37,9 +35,7 @@ export const reviews: Review[] = [
     total: 6600,
     story:
       "ভাইরে ভাই, সকাল ৮টায় গেসিলাম, ভাবসিলাম কাজ হইয়া যাইব। শেষে দেখি লাইনে দাঁড়াইতেই দালাল মামা আইসা কয় - 'বস, সিস্টেমে যান, নাইলে ৩ মাসেও হইব না।' সিস্টেম মানে কী, পরে বুঝলাম। মাখনের মতো কাজ হইসে, পকেট ফাঁকা।",
-    laughs: 234,
     sames: 89,
-    caps: 12,
   },
   {
     id: "2",
@@ -57,9 +53,7 @@ export const reviews: Review[] = [
     total: 6500,
     story:
       "গাড়ির ফিটনেস করতে গেসি। দালাল ছাড়া ঢুকতেও দেয় না। ভিতরে গিয়া দেখি স্যারের মুখ গোমরা। ২ হাজার দিতেই হাসি ফুটল। বাংলাদেশ এগিয়ে যাচ্ছে!",
-    laughs: 412,
     sames: 156,
-    caps: 8,
   },
 ];
 

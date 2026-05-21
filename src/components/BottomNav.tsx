@@ -1,10 +1,10 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Home, Trophy, Feather } from "lucide-react";
+import { Megaphone, BookOpen } from "lucide-react";
 import { useSubmissionSheet } from "./SubmissionSheet";
 
 const items = [
-  { to: "/", label: "জগাখিচুড়ি", Icon: Home },
-  { to: "/leaderboard", label: "সেরা ধান্দাবাজ", Icon: Trophy },
+  { to: "/", label: "কোপের কিসসা", Icon: Megaphone },
+  { to: "/halkhata", label: "হালখাতা", Icon: BookOpen },
 ] as const;
 
 export function BottomNav() {
@@ -20,16 +20,19 @@ export function BottomNav() {
           );
         })}
 
-        <div className="relative -mt-8 flex flex-col items-center">
+        <div className="relative -mt-10 flex flex-col items-center">
           <button
             onClick={open}
-            aria-label="খুইলা কন"
-            className="grid h-14 w-14 place-items-center rounded-full text-white shadow-[0_10px_25px_rgba(233,30,99,0.35)] active:scale-95 transition"
-            style={{ background: "linear-gradient(45deg, #E91E63, #FFB300)" }}
+            aria-label="কোপ রিপোর্ট"
+            className="grid h-16 w-16 place-items-center active:scale-95 hover:scale-110 transition duration-200 cursor-pointer"
           >
-            <Feather size={24} strokeWidth={2.2} />
+            <img
+              src="/money.gif"
+              alt="খুইলা কন"
+              className="h-16 w-16 object-contain select-none pointer-events-none"
+            />
           </button>
-          <span className="mt-1 text-[10px] font-semibold text-gray-700">খুইলা কন</span>
+          <span className="mt-1 text-[10px] font-semibold text-gray-700 select-none">খুইলা কন</span>
         </div>
 
         {items.slice(1, 2).map(({ to, label, Icon }) => {
@@ -51,23 +54,37 @@ function NavLink({
 }: {
   to: string;
   label: string;
-  Icon: typeof Home;
+  Icon: typeof Megaphone;
   active: boolean;
 }) {
+  const isHalkhata = to === "/halkhata";
+  const activeColor = isHalkhata ? "#DC2626" : "#E91E63";
+  const inactiveColor = "#6B7280";
+
+  // Different dynamic interactive hover styles for each icon
+  const hoverClass = isHalkhata
+    ? "group-hover:rotate-12 group-hover:scale-105"
+    : "group-hover:-rotate-12 group-hover:scale-110";
+
   return (
     <Link
       to={to}
-      className="flex flex-col items-center gap-1 py-1"
+      className="flex flex-col items-center gap-1 py-1 group"
     >
-      <Icon
-        size={22}
-        strokeWidth={active ? 2.4 : 1.8}
-        color={active ? "#E91E63" : "#6B7280"}
-        fill={active ? "#E91E63" : "none"}
-      />
+      <div className={`transition-all duration-200 ${hoverClass} ${active && !isHalkhata ? "animate-pulse" : ""}`}>
+        <Icon
+          size={22}
+          strokeWidth={active ? 2.4 : 1.8}
+          color={active ? activeColor : inactiveColor}
+          fill={active && !isHalkhata ? activeColor : "none"}
+          className={isHalkhata ? (active ? "text-red-600 dark:text-red-500" : "text-gray-500") : (active ? "text-[#E91E63]" : "text-gray-500")}
+        />
+      </div>
       <span
-        className={`text-[10px] leading-tight ${
-          active ? "font-bold text-[#E91E63]" : "text-gray-500"
+        className={`text-[10px] leading-tight transition-colors ${
+          active 
+            ? `font-bold ${isHalkhata ? "text-red-600 dark:text-red-500" : "text-[#E91E63]"}` 
+            : "text-gray-500"
         }`}
       >
         {label}
@@ -75,3 +92,5 @@ function NavLink({
     </Link>
   );
 }
+
+// MoneyBird component removed as we are now using the animated public/money.gif asset.

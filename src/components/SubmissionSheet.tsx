@@ -3,7 +3,7 @@ import { createContext, useContext, useState, useEffect, type ReactNode } from "
 import { Plus, X, MapPin, ChevronDown } from "lucide-react";
 import html2canvas from "html2canvas";
 import { toast } from "sonner";
-import { supabase } from "@/lib/supabase";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
 type Ctx = { open: () => void; close: () => void; isOpen: boolean };
 const SheetCtx = createContext<Ctx | null>(null);
@@ -292,6 +292,7 @@ const errorMessages = [
 ];
 
 const DHAKAIYA_USERNAMES = [
+  // --- ওরিজিনাল ওস্তাদ ও ডন সিরিজ ---
   "মিরপুরের মজনু",
   "গুলিস্তানের জেমস বন্ড",
   "গুলশানের গডফাদার",
@@ -301,9 +302,101 @@ const DHAKAIYA_USERNAMES = [
   "পুরান ঢাকার নবাব",
   "ফার্মগেটের ফালতু",
   "বনানীর বস",
-  "যাত্রাবাড়ীর যাত্রী",
-  "তেজগাঁওয়ের তানিয়া",
+  "যাত্রাবাড়ীর যাত্রী",
+  "তেজগাঁওয়ের তানিয়া",
   "পল্টনের পল্টু",
+  "কাওরান বাজারের ক্যাশিয়ার",
+  "চকবাজারের চশমখোর",
+  "সদরঘাটের কুলি",
+  "গাবতলীর কন্ডাক্টর",
+  "مহাখালীর মন্টু ভাই",
+  "মোহাম্মদপুরের মাফিয়া",
+  "খিলগাঁওয়ের খাদক",
+  "বাসাবোর বাটপার",
+  "আজিমপুরের আতেল",
+  "লালবাগের কেল্লা ফতেহ",
+  "মগবাজারের মগা",
+  "রামপুরার রোমিও",
+  "বাড্ডার বাঁশখোর",
+  "খিলখেতের খিটখিটে",
+  "কাকরাইলের কাসেম",
+
+  // --- চিপা গলি ও রাস্তাঘাটের পাবলিক ---
+  "নীলক্ষেতের ডুপ্লিকেট",
+  "শাহবাগের সেলফি কিং",
+  "প্রেসক্লাবের টকশো",
+  "কমলাপুরের কুলিজ্ঞান",
+  "টঙ্গীর টেনশন",
+  "সাভারের সন্টু",
+  "উত্তরা বারো নাম্বারের বাদশা",
+  "মিরপুর ১০ এর মেসি",
+  "কুড়িল ফ্লাইওভারের কবি",
+  "বসুন্ধরার ব্রো",
+  "কদমতলীর কালাচাঁদ",
+  "পোস্তগোলার পন্টু",
+  "বাবুবাজারের ব্যাপারী",
+  "ইসলামপুরের ইবলিশ",
+  "পাটুয়াটুলীর চশমা",
+  "নয়াবাজারের নাদান",
+  "ধোলাইখালের মেকানিক",
+  "ওয়ারীর ভিআইপি",
+  "স্বামীবাগের সাধু",
+  "টিটিপাড়ার টিকিটবক্স",
+
+  // --- চা খোর ও ধান্দাবাজ সিরিজ ---
+  "টং দোকানের ট্রাম্প",
+  "কড়া চায়ের কাস্টমার",
+  "বিস্কুট চুবানো বিল্লাল",
+  "রং চায়ের রোবট",
+  "ধোঁয়া উঠা ধনা",
+  "মামার পকেট কাটা",
+  "ঘুষের খাতা মেইন্টেইনার",
+  "টেবিলের তলার পাহারাদার",
+  "ফাইল আটকানো ফজলু",
+  "চা খাওয়ার পয়সা ট্র্যাকার",
+  "ডিজিটাল কোপ খাদক",
+  "বাঁশ বাগানের বুলবুল",
+  "পকেট কাটার পার্টনার",
+  "ক্যাশকার্ডের কাঙাল",
+  "রিসিপ্ট চোর",
+  "সিল মারা সিরাজ",
+
+  // --- খাটি পুরান ঢাকা ও লোকাল স্ল্যাং ভাইব ---
+  "ঢাকাইয়া কাউয়া",
+  "চিপা গলির চামচিকা",
+  "হাতিরঝিলের মজনু",
+  "লুঙ্গি পরা লর্ড",
+  "মুড়ির টিন ড্রাইভার",
+  "লোকাল বাসের ঝুলন্ত মজনু",
+  "পাবলিকের পকেটমার",
+  "সিএনজি মিটার চোর",
+  "রিকশা ভাড়ার দালালি",
+  "জ্যামের জাদুকর",
+  "রাস্তার ধারের ফিলোসফার",
+  "ফুটপাতের হকার",
+  "টাকার কুমির",
+  "চোরের বাপের ফুফাতো ভাই",
+  "নন-ভেজিটেরিয়ান বাঘ",
+  "হালখাতার লাল কালি",
+
+  // --- ফানি ক্যাটাগরি ও আধুনিক ঢাকাইয়া মিক্স ---
+  "ওয়াইফাই চোর",
+  "ফেসবুকের ফাজিল",
+  "ইনস্টাগ্রামের ইবলিশ",
+  "টিকটকের টর্নেডো",
+  "অনলাইন মাস্তান",
+  "কীবোর্ড ফাইটার",
+  "লাইকের কাঙাল",
+  "কমেন্টের কোপাজিশ",
+  "ভাইরাল ভাদাইম্মা",
+  "মিম মেকার মজনু",
+  "ক্যাশলেস ফকির",
+  "বিকাশ চোর ফাতরা",
+  "স্মার্ট বাটপার",
+  "ডিজিটাল দাদাগিরি",
+  "আকামের অলরাউন্ডার",
+  "নবাবের নাতি",
+  "চোরের হাটের দালাল",
 ];
 
 export interface VictimBadge {
@@ -319,28 +412,28 @@ export function getVictimBadge(totalAmount: number): VictimBadge {
       icon: "🥉",
       title: "হালকার ওপর ঝাপসা",
       subtext: "চা-পানির বিল দিয়া কোনোমতে বাইচা গেছেন!",
-      color: "text-yellow-600 border-yellow-250 bg-yellow-50/60",
+      color: "text-yellow-600 border-yellow-200 bg-yellow-50/60",
     };
   } else if (totalAmount < 5000) {
     return {
       icon: "🥈",
       title: "মাঝারি ছ্যাঁকা",
       subtext: "পকেটটা মোটামুটি ভালোই কাটসে। সান্ত্বনা নিবেন!",
-      color: "text-gray-500 border-gray-250 bg-gray-50/60",
+      color: "text-gray-500 border-gray-200 bg-gray-50/60",
     };
   } else if (totalAmount <= 10000) {
     return {
       icon: "🥇",
       title: "পকেট শহীদ",
       subtext: "আপনার এই বিশাল অবদানে স্যারদের আজকের লাঞ্চটা জোস হবে!",
-      color: "text-amber-600 border-amber-250 bg-amber-50/60",
+      color: "text-amber-600 border-amber-200 bg-amber-50/60",
     };
   } else {
     return {
       icon: "💀",
       title: "জাতীয় 'ভিআইপি' ডোনার",
       subtext: "আপনার টাকায় তো স্যারদের বিল্ডিংয়ের রড কেনা হবে! আপনাকে পুরাই স্যালুট!",
-      color: "text-blue-600 border-blue-250 bg-blue-50/60",
+      color: "text-blue-600 border-blue-200 bg-blue-50/60",
     };
   }
 }
@@ -359,6 +452,33 @@ function SubmissionSheet() {
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Local submission limiting states & helpers
+  const [localSubmissionCount, setLocalSubmissionCount] = useState(0);
+
+  const getLocalSubmissionsInLast24Hours = () => {
+    try {
+      const stored = localStorage.getItem("dhakaiya_submissions");
+      if (!stored) return [];
+      const parsed = JSON.parse(stored) as string[];
+      const now = new Date().getTime();
+      return parsed.map(t => new Date(t).getTime()).filter(t => now - t < 24 * 60 * 60 * 1000);
+    } catch {
+      return [];
+    }
+  };
+
+  const recordLocalSubmission = () => {
+    try {
+      const active = getLocalSubmissionsInLast24Hours();
+      const updated = [...active, new Date().getTime()];
+      localStorage.setItem("dhakaiya_submissions", JSON.stringify(updated.map(t => new Date(t).toISOString())));
+      setLocalSubmissionCount(updated.length);
+    } catch (e) {
+      console.warn("localStorage write failed", e);
+    }
+  };
 
   // Digital Cash Memo states
   const [showMemo, setShowMemo] = useState(false);
@@ -382,6 +502,9 @@ function SubmissionSheet() {
   // Reset form and pick a random captcha challenge when the sheet opens
   useEffect(() => {
     if (isOpen) {
+      const active = getLocalSubmissionsInLast24Hours();
+      setLocalSubmissionCount(active.length);
+
       const rand = CAPTCHA_CHALLENGES[Math.floor(Math.random() * CAPTCHA_CHALLENGES.length)];
       setCaptchaChallenge(rand);
       setSelectedCaptchaOption(null);
@@ -399,6 +522,7 @@ function SubmissionSheet() {
       setDetails("");
       setShowMemo(false);
       setSubmittedData(null);
+      setIsSubmitting(false);
     }
   }, [isOpen]);
 
@@ -432,107 +556,136 @@ function SubmissionSheet() {
 
     const badge = getVictimBadge(totalAmount);
 
-    setSubmittedData({
-      author,
-      area,
-      spot: spot || "অন্যান্য সরকারি অফিস",
-      combos: activeCombos,
-      totalAmount,
-      dateStr,
-      uniqueId,
-    });
+    setIsSubmitting(true);
 
-    // Fire-and-forget resilient Supabase insert with Cloudflare-aware error handling
+    // Secure backend API insert with IP rate limiting and server validation
     const insertRecord = async () => {
       try {
-        const { data, error: insertErr } = await supabase
-          .from("bribe_reports")
-          .insert([
-            {
-              author,
-              officeName: spot || "অন্যান্য সরকারি অফিস",
-              area,
-              totalAmount,
-              teaCups: rating,
-              badgeTitle: badge.title,
-              comments: details,
-              items: activeCombos.map((c) => ({ who: c.who, amount: parseFloat(c.amount) })),
-              category: subCategory || "অন্যান্য",
-            },
-          ]);
+        const response = await fetch("/api/submit-report", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            author,
+            officeName: spot || "অন্যান্য সরকারি অফিস",
+            area,
+            totalAmount,
+            teaCups: rating,
+            badgeTitle: badge.title,
+            comments: details,
+            items: activeCombos.map((c) => ({ who: c.who, amount: parseFloat(c.amount) })),
+            category: subCategory || "অন্যান্য",
+            captchaQuestionId: captchaChallenge.id,
+            userSelectedAnswer: selectedCaptchaOption,
+          }),
+        });
 
-        if (insertErr) {
-          console.warn("⚠️ Supabase insert failed:", insertErr.message);
-          // Detect Cloudflare WAF / 403 Forbidden responses surfaced via Supabase error
-          const is403 =
-            insertErr.message?.toLowerCase().includes("403") ||
-            insertErr.message?.toLowerCase().includes("forbidden") ||
-            (insertErr as any)?.status === 403;
-          if (is403) {
-            toast.error("সিকিউরিটি ব্লক! 🚫", {
-              description:
-                "ওস্তাদ, সিকিউরিটি রাডার আপনাকে ব্লক করসে! একটু পরে আবার ট্রাই নেন বা ভিপিএন অফ করেন।",
+        const result = await response.json();
+
+        if (!response.ok) {
+          const errMsg = result.error || "সাবমিট করতে সমস্যা হয়েছে!";
+          if (response.status === 429) {
+            toast.error("সীমা অতিক্রম! 🚫", {
+              description: errMsg,
               duration: 6000,
             });
           } else {
-            toast.warning("সাবমিট লগ হয়নি 😬", {
-              description: "ডেটাবেসে সেইভ করতে সমস্যা হইছে, তবে মেমোটা পাইলেন। পরে আবার ট্রাই করেন!",
+            toast.error("সাবমিট ব্যর্থ 😬", {
+              description: errMsg,
               duration: 5000,
             });
           }
+          setIsSubmitting(false);
+          return;
+        }
+
+        console.log("✅ API submit success:", result);
+
+        setSubmittedData({
+          author,
+          area,
+          spot: spot || "অন্যান্য সরকারি অফিস",
+          combos: activeCombos,
+          totalAmount,
+          dateStr,
+          uniqueId,
+        });
+
+        recordLocalSubmission();
+
+        if (result.demoMode) {
+          toast.success("মেমো রেডি মামা! ✅", {
+            description: "লোকাল ডেমো মোডে আছেন, মেমোটা ডাউনলোড বা শেয়ার করে নেন!",
+            duration: 3500,
+          });
         } else {
-          console.log("✅ Supabase insert success:", data);
           toast.success("কোপের খবর সাবমিট হইছে! ✅", {
             description: "আপনার রিপোর্ট পাবলিক রাডারে যোগ হইয়া গেছে।",
             duration: 3500,
           });
         }
+
+        setShowMemo(true);
       } catch (err: any) {
-        console.warn("⚠️ Supabase insert error catch wrapper:", err.message || err);
-        // Network-level failures (no internet, Cloudflare JS challenge blocking the fetch, etc.)
-        const isNetworkOrCloudflareBlock =
-          err?.message?.toLowerCase().includes("failed to fetch") ||
-          err?.message?.toLowerCase().includes("networkerror") ||
-          err?.message?.toLowerCase().includes("network request failed") ||
-          err?.status === 403 ||
-          err?.code === 403;
-        if (isNetworkOrCloudflareBlock) {
-          toast.error("সিকিউরিটি ব্লক! 🚫", {
-            description:
-              "ওস্তাদ, সিকিউরিটি রাডার আপনাকে ব্লক করসে! একটু পরে আবার ট্রাই নেন বা ভিপিএন অফ করেন।",
-            duration: 6000,
-          });
-        } else {
-          toast.warning("নেটওয়ার্ক গেছে মনে হয় 😓", {
-            description: "ইন্টারনেট বা সার্ভারে কিছু একটা হইছে। মেমোটা সেইভ করেন, পরে আবার সাবমিট করেন।",
-            duration: 5000,
-          });
-        }
+        console.warn("⚠️ API submit error catch wrapper:", err.message || err);
+        toast.error("নেটওয়ার্ক সমস্যা 😓", {
+          description: "সার্ভারের সাথে যোগাযোগ করা যাচ্ছে না। দয়া করে ইন্টারনেট কানেকশন চেক করুন!",
+          duration: 5000,
+        });
+      } finally {
+        setIsSubmitting(false);
       }
     };
 
     insertRecord();
-    setShowMemo(true);
   }
 
   const downloadMemo = async () => {
     const element = document.getElementById("vip-memo-container");
     if (!element) return;
     try {
-      const canvas = await html2canvas(element, {
+      // Resolve html2canvas function robustly in SSR/Vite environments
+      const html2canvasFn = typeof html2canvas === "function"
+        ? html2canvas
+        : (html2canvas as any).default;
+
+      if (typeof html2canvasFn !== "function") {
+        throw new Error("html2canvas is not a function or failed to load");
+      }
+
+      // Use scale: 2 (crisp & highly stable across both mobile & desktop browsers)
+      // Set scrollX/Y: 0 to prevent shifted/blank captures when container is scrolled
+      const canvas = await html2canvasFn(element, {
         backgroundColor: "#FDFAF4",
-        scale: 3,
+        scale: 2,
         useCORS: true,
         logging: false,
+        allowTaint: false,
+        scrollX: 0,
+        scrollY: 0,
       });
-      const image = canvas.toDataURL("image/png");
+      
+      // Export using data URL for maximum cross-browser and mobile device compatibility
+      const imgData = canvas.toDataURL("image/png");
+      if (!imgData || imgData === "data:,") {
+        throw new Error("Canvas export returned empty data");
+      }
+      
       const link = document.createElement("a");
-      link.href = image;
+      link.href = imgData;
       link.download = `ভিআইপি_আপ্যায়ন_বিল_${submittedData?.uniqueId || "bribe"}.png`;
+      document.body.appendChild(link);
       link.click();
-    } catch (err) {
+      document.body.removeChild(link);
+      
+      toast.success("মেমো ডাউনলোড শুরু হইছে! 📥");
+    } catch (err: any) {
       console.error("Error generating image:", err);
-      alert("মামা, ইমেজ জেনারেট করতে সমস্যা হইসে! আবার ট্রাই মারেন।");
+      toast.error("মেমো জেনারেট করতে সমস্যা হইসে মামা! আবার ট্রাই মারেন।", {
+        description: err?.message || String(err),
+        duration: 8000,
+      });
     }
   };
 
@@ -967,17 +1120,31 @@ function SubmissionSheet() {
               </div>
 
               <div className="space-y-3">
+                {localSubmissionCount >= 2 && (
+                  <div className="my-2 flex gap-3 rounded-2xl border border-rose-250 bg-rose-50/70 p-4 text-left shadow-sm items-start animate-pulse">
+                    <span className="text-lg shrink-0 select-none leading-none mt-0.5">🚫</span>
+                    <div className="space-y-1">
+                      <h4 className="text-sm font-bold text-rose-900 leading-normal py-0.5">
+                        🚫 ওস্তাদ, আজকের কোটা শেষ!
+                      </h4>
+                      <p className="text-xs font-semibold text-rose-800 leading-relaxed py-0.5">
+                        ২৪ ঘণ্টায় ২ বারের বেশি রিপোর্ট করা যাবে না। শান্ত হোন মামা! কালকে আবার ফ্রেশ খবর নিয়া আইসেন।
+                      </p>
+                    </div>
+                  </div>
+                )}
+
                 <button
                   type="submit"
-                  disabled={!captchaSolved}
+                  disabled={!captchaSolved || localSubmissionCount >= 2 || isSubmitting}
                   className={`w-full rounded-2xl py-4 text-lg font-extrabold text-white shadow-lg active:scale-[0.99] transition-all duration-200 ${
-                    !captchaSolved
+                    !captchaSolved || localSubmissionCount >= 2 || isSubmitting
                       ? "opacity-50 cursor-not-allowed bg-gray-300 pointer-events-none"
                       : "hover:shadow-xl hover:brightness-105"
-                  }`}
-                  style={captchaSolved ? { background: "linear-gradient(90deg, #E91E63, #FFB300)" } : undefined}
+                  } ${isSubmitting ? "animate-pulse" : ""}`}
+                  style={captchaSolved && localSubmissionCount < 2 && !isSubmitting ? { background: "linear-gradient(90deg, #E91E63, #FFB300)" } : undefined}
                 >
-                  পাবলিকের সামনে ন্যাংটা করেন!
+                  {isSubmitting ? "দাঁড়ান ওস্তাদ, কোপটা বসতাছে... ⏳" : localSubmissionCount >= 2 ? "কোটা শেষ মামা!" : "পাবলিকের সামনে ন্যাংটা করেন!"}
                 </button>
 
                 {/* Anonymity Disclaimer */}
@@ -990,6 +1157,49 @@ function SubmissionSheet() {
               </div>
             </form>
           </motion.div>
+
+          {/* Glassmorphic Full Screen Submitting Overlay */}
+          <AnimatePresence>
+            {isSubmitting && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-[120] flex flex-col items-center justify-center bg-black/45 backdrop-blur-md"
+              >
+                <motion.div
+                  initial={{ scale: 0.9, y: 20 }}
+                  animate={{ scale: 1, y: 0 }}
+                  exit={{ scale: 0.9, y: 20 }}
+                  className="flex flex-col items-center justify-center max-w-sm rounded-3xl bg-white/90 border border-white/40 p-8 shadow-2xl text-center space-y-4 m-4"
+                >
+                  {/* Animated Loading Spinner Container */}
+                  <div className="relative flex items-center justify-center w-20 h-20">
+                    {/* Animated pulsing gradient background rings */}
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#E91E63] to-[#FFB300] opacity-20 animate-ping" />
+                    <div className="absolute inset-2 rounded-full bg-gradient-to-bl from-[#00BCD4] to-[#00838F] opacity-15 animate-pulse" />
+                    
+                    {/* Main spinning ring */}
+                    <div className="w-14 h-14 rounded-full border-4 border-gray-150 border-t-amber-500 border-r-[#E91E63] animate-spin" />
+                    
+                    {/* Center cup icon pulsing */}
+                    <div className="absolute text-2xl animate-bounce">
+                      ☕
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <h3 className="text-lg font-black text-gray-800 leading-tight">
+                      হিসাবটা ক্যাশ মেমোতে তুলতেছি, একটু দম লন!
+                    </h3>
+                    <p className="text-xs font-bold text-gray-500">
+                      সার্ভারের বড় স্যার খাম চেক করতেছেন... 🤫
+                    </p>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Post-Submission "Digital Cash Memo" Overlay Modal */}
           {showMemo && submittedData && (
@@ -1010,16 +1220,25 @@ function SubmissionSheet() {
                   id="vip-memo-container"
                   className="w-full bg-[#FDFAF4] border-2 border-red-700/60 p-4 font-sans text-red-800 space-y-4 relative overflow-hidden"
                   style={{
-                    boxShadow: "0 0 0 4px #FDFAF4, inset 0 0 0 1px rgba(185, 28, 28, 0.4)",
-                    background: "radial-gradient(circle, #FDFAF4 90%, #F5EFEB 100%)",
+                    backgroundColor: "#FDFAF4",
                   }}
                 >
-                  {/* Paper Grid background effect */}
+                  {/* Paper Grid background effect (Horizontal) */}
                   <div
+                    data-html2canvas-ignore="true"
                     className="absolute inset-0 opacity-[0.03] pointer-events-none"
                     style={{
-                      backgroundImage: "linear-gradient(red 1px, transparent 1px), linear-gradient(90deg, red 1px, transparent 1px)",
-                      backgroundSize: "20px 20px",
+                      backgroundImage: "linear-gradient(red 1px, transparent 1px)",
+                      backgroundSize: "100% 20px",
+                    }}
+                  />
+                  {/* Paper Grid background effect (Vertical) */}
+                  <div
+                    data-html2canvas-ignore="true"
+                    className="absolute inset-0 opacity-[0.03] pointer-events-none"
+                    style={{
+                      backgroundImage: "linear-gradient(90deg, red 1px, transparent 1px)",
+                      backgroundSize: "20px 100%",
                     }}
                   />
 
@@ -1046,7 +1265,7 @@ function SubmissionSheet() {
                       );
                     })()}
 
-                    <h1 className="text-lg font-black tracking-tight text-red-705 border-b-2 border-red-700/40 pb-1.5 uppercase">
+                    <h1 className="text-lg font-black tracking-tight text-red-700 border-b-2 border-red-700/40 pb-1.5 uppercase">
                       আন-অফিসিয়াল 'ভিআইপি আপ্যায়ন' বিল
                     </h1>
                   </div>
@@ -1097,10 +1316,8 @@ function SubmissionSheet() {
 
                   {/* Traditional Paid Stamp */}
                   <div
-                    className="absolute right-4 bottom-20 opacity-85 select-none pointer-events-none transform -rotate-12 border-4 border-double border-red-650/80 rounded-2xl px-3 py-1 font-black text-red-600/90 text-sm tracking-widest text-center shadow-sm"
-                    style={{
-                      boxShadow: "inset 0 0 0 2px rgba(220, 38, 38, 0.8)",
-                    }}
+                    className="absolute right-4 bottom-20 opacity-85 select-none pointer-events-none border-[3px] border-dashed border-red-600/80 rounded-2xl px-3 py-1 font-black text-red-600 text-sm tracking-widest text-center shadow-sm"
+                    style={{ transform: "rotate(-12deg)" }}
                   >
                     ৳ পরিশোধিত ৳<br />
                     <span className="text-[9px] uppercase tracking-wider font-extrabold opacity-95">(খাম রেডি)</span>
