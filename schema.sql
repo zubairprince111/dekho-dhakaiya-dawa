@@ -7,11 +7,11 @@ CREATE TABLE IF NOT EXISTS public.bribe_reports (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
     author TEXT DEFAULT 'অজ্ঞাত পাবলিক'::text NOT NULL,
-    officeName TEXT DEFAULT 'সরকারি অফিস'::text NOT NULL,
+    "officeName" TEXT DEFAULT 'সরকারি অফিস'::text NOT NULL,
     area TEXT DEFAULT 'অজ্ঞাত'::text NOT NULL,
-    totalAmount BIGINT DEFAULT 0 NOT NULL,
-    teaCups INTEGER DEFAULT 3 NOT NULL,
-    badgeTitle TEXT DEFAULT 'হালকার ওপর ঝাপসা'::text NOT NULL,
+    "totalAmount" BIGINT DEFAULT 0 NOT NULL,
+    "teaCups" INTEGER DEFAULT 3 NOT NULL,
+    "badgeTitle" TEXT DEFAULT 'হালকার ওপর ঝাপসা'::text NOT NULL,
     comments TEXT,
     items JSONB DEFAULT '[]'::jsonb NOT NULL,
     category TEXT DEFAULT 'অন্যান্য'::text NOT NULL,
@@ -46,11 +46,11 @@ RETURNS TRIGGER AS $$
 BEGIN
     -- 1. Lock all core details (users cannot alter core reports)
     IF OLD.author IS DISTINCT FROM NEW.author OR
-       OLD.officeName IS DISTINCT FROM NEW.officeName OR
+       OLD."officeName" IS DISTINCT FROM NEW."officeName" OR
        OLD.area IS DISTINCT FROM NEW.area OR
-       OLD.totalAmount IS DISTINCT FROM NEW.totalAmount OR
-       OLD.teaCups IS DISTINCT FROM NEW.teaCups OR
-       OLD.badgeTitle IS DISTINCT FROM NEW.badgeTitle OR
+       OLD."totalAmount" IS DISTINCT FROM NEW."totalAmount" OR
+       OLD."teaCups" IS DISTINCT FROM NEW."teaCups" OR
+       OLD."badgeTitle" IS DISTINCT FROM NEW."badgeTitle" OR
        OLD.comments IS DISTINCT FROM NEW.comments OR
        OLD.items IS DISTINCT FROM NEW.items OR
        OLD.category IS DISTINCT FROM NEW.category OR
@@ -108,7 +108,7 @@ ON CONFLICT DO NOTHING;
 
 
 -- 4. Initial Satirical Seed Reports (কোপ খতিয়ান ডেমো ডেটা)
-INSERT INTO public.bribe_reports (author, officeName, area, totalAmount, teaCups, badgeTitle, comments, items, category, sames)
+INSERT INTO public.bribe_reports (author, "officeName", area, "totalAmount", "teaCups", "badgeTitle", comments, items, category, sames)
 VALUES
     ('মিরপুরের মফিজ', 'বিআরটিএ (BRTA)', 'মিরপুর', 5500, 4, 'কোপের উপর কিসসা', 'ড্রাইভিং লাইসেন্স নিতে গেছিলাম, দালাল ভাই বললেন ফাইল নাকি এগোয় না। ৪ কাপ চা খাইয়ে ফাইল সচল করলাম!', '[]'::jsonb, 'লাইসেন্স', 34),
     ('অজ্ঞাত ব্যবসায়ী', 'ওয়াসা (WASA)', 'মতিঝিল', 12000, 2, 'বড় কোপ', 'অফিসের নতুন সংযোগ ফি যা তার চেয়ে মিষ্টি খাওয়ার খরচ বেশি চাইল। না দিলে নাকি লাইনে পানি আসবে না!', '[]'::jsonb, 'সংযোগ', 21),

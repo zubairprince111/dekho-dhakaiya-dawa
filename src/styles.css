@@ -4,7 +4,8 @@
 
 @font-face {
   font-family: "BengaliDigits";
-  src: local("Segoe UI Historic"),
+  src: local("Hind Siliguri"),
+       local("Nirmala UI"),
        local("Noto Sans Bengali"),
        local("Kohinoor Bangla"),
        local("Bangla MN"),
