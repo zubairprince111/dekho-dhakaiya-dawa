@@ -114,14 +114,25 @@ function SubmissionSheet() {
                 <div className="space-y-2">
                   {combos.map((c, i) => (
                     <div key={i} className="grid grid-cols-2 gap-2">
-                      <input
+                      <select
                         value={c.who}
                         onChange={(e) => {
                           const v = [...combos]; v[i].who = e.target.value; setCombos(v);
                         }}
-                        placeholder="কার পকেটে গেলো?"
-                        className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-3 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-[#00BCD4]"
-                      />
+                        className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-3 text-sm text-gray-800 focus:outline-none focus:ring-1 focus:ring-[#00BCD4]"
+                      >
+                        <option value="">কার পকেটে গেলো?</option>
+                        <optgroup label={category === "gov" ? "🏛️ সরকারি দফতর" : "🚌 লোকাল সিন্ডিকেট"}>
+                          {WHO_OPTIONS[category].map((o) => (
+                            <option key={o} value={o}>{o}</option>
+                          ))}
+                        </optgroup>
+                        <optgroup label="❓ অন্যান্য">
+                          {OTHER_OPTIONS.map((o) => (
+                            <option key={o} value={o}>{o}</option>
+                          ))}
+                        </optgroup>
+                      </select>
                       <input
                         value={c.amount}
                         onChange={(e) => {
