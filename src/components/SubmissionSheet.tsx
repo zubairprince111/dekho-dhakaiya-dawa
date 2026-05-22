@@ -654,9 +654,23 @@ function SubmissionSheet() {
         throw new Error("html2canvas is not a function or failed to load");
       }
 
-      // Use scale: 2 (crisp & highly stable across both mobile & desktop browsers)
-      // Set scrollX/Y: 0 to prevent shifted/blank captures when container is scrolled
-      const canvas = await html2canvasFn(element, {
+      // Use a consistent standard mobile width for the generated image, 
+      // ensuring perfect proportions, alignment and resolution on any device.
+      const renderWidth = 375;
+      const clone = element.cloneNode(true) as HTMLElement;
+      
+      // Place clone offscreen horizontally (left: -9999px) instead of top: -99999px.
+      // CRITICAL: Do NOT set display: none or visibility: hidden, because
+      // html2canvas will completely ignore rendering hidden elements!
+      clone.style.position = "fixed";
+      clone.style.top = "0";
+      clone.style.left = "-9999px";
+      clone.style.width = renderWidth + "px";
+      clone.style.height = "auto";
+      clone.style.overflow = "visible";
+      document.body.appendChild(clone);
+
+      const canvas = await html2canvasFn(clone, {
         backgroundColor: "#FDFAF4",
         scale: 2,
         useCORS: true,
@@ -664,8 +678,12 @@ function SubmissionSheet() {
         allowTaint: false,
         scrollX: 0,
         scrollY: 0,
+        windowWidth: renderWidth,
+        width: renderWidth,
       });
-      
+
+      document.body.removeChild(clone);
+
       // Export using data URL for maximum cross-browser and mobile device compatibility
       const imgData = canvas.toDataURL("image/png");
       if (!imgData || imgData === "data:,") {
@@ -1203,7 +1221,7 @@ function SubmissionSheet() {
 
           {/* Post-Submission "Digital Cash Memo" Overlay Modal */}
           {showMemo && submittedData && (
-            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
+            <div className="fixed inset-0 z-[100] flex items-start justify-center bg-black/60 backdrop-blur-sm overflow-y-auto py-8 px-4">
               <div
                 className="fixed inset-0 cursor-pointer"
                 onClick={handleCloseMemo}
@@ -1213,7 +1231,7 @@ function SubmissionSheet() {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
                 transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                className="relative flex flex-col items-center max-w-sm w-full bg-[#FAF8F5] rounded-3xl border border-gray-200/50 p-5 shadow-2xl space-y-4 max-h-[92vh] overflow-y-auto z-10 select-none"
+                className="relative flex flex-col items-center max-w-sm w-full bg-[#FAF8F5] rounded-3xl border border-gray-200/50 p-4 sm:p-5 shadow-2xl space-y-4 z-10 select-none"
               >
                 {/* Traditional Cash Memo Document */}
                 <div

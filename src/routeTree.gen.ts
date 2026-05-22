@@ -13,6 +13,7 @@ import { Route as RatesRouteImport } from './routes/rates'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as HalkhataRouteImport } from './routes/halkhata'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiVoteRouteImport } from './routes/api.vote'
 import { Route as ApiSubmitReportRouteImport } from './routes/api.submit-report'
 
 const RatesRoute = RatesRouteImport.update({
@@ -35,6 +36,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiVoteRoute = ApiVoteRouteImport.update({
+  id: '/api/vote',
+  path: '/api/vote',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiSubmitReportRoute = ApiSubmitReportRouteImport.update({
   id: '/api/submit-report',
   path: '/api/submit-report',
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/rates': typeof RatesRoute
   '/api/submit-report': typeof ApiSubmitReportRoute
+  '/api/vote': typeof ApiVoteRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/rates': typeof RatesRoute
   '/api/submit-report': typeof ApiSubmitReportRoute
+  '/api/vote': typeof ApiVoteRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,12 +70,25 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/rates': typeof RatesRoute
   '/api/submit-report': typeof ApiSubmitReportRoute
+  '/api/vote': typeof ApiVoteRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/halkhata' | '/privacy' | '/rates' | '/api/submit-report'
+  fullPaths:
+    | '/'
+    | '/halkhata'
+    | '/privacy'
+    | '/rates'
+    | '/api/submit-report'
+    | '/api/vote'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/halkhata' | '/privacy' | '/rates' | '/api/submit-report'
+  to:
+    | '/'
+    | '/halkhata'
+    | '/privacy'
+    | '/rates'
+    | '/api/submit-report'
+    | '/api/vote'
   id:
     | '__root__'
     | '/'
@@ -75,6 +96,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/rates'
     | '/api/submit-report'
+    | '/api/vote'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -83,6 +105,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   RatesRoute: typeof RatesRoute
   ApiSubmitReportRoute: typeof ApiSubmitReportRoute
+  ApiVoteRoute: typeof ApiVoteRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -115,6 +138,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/vote': {
+      id: '/api/vote'
+      path: '/api/vote'
+      fullPath: '/api/vote'
+      preLoaderRoute: typeof ApiVoteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/submit-report': {
       id: '/api/submit-report'
       path: '/api/submit-report'
@@ -131,6 +161,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   RatesRoute: RatesRoute,
   ApiSubmitReportRoute: ApiSubmitReportRoute,
+  ApiVoteRoute: ApiVoteRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

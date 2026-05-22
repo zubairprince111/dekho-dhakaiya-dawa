@@ -7,6 +7,7 @@ export interface Review {
   id: string;
   author: string;
   location: string;
+  area?: string;
   timeAgo: string;
   rating: 1 | 2 | 3 | 4 | 5;
   ratingLabel: string;
@@ -19,6 +20,25 @@ export interface Review {
 
 export const reviews: Review[] = [
   {
+    id: "demo-new",
+    author: "ঢাকার ওস্তাদ",
+    location: "পাসপোর্ট অফিস",
+    area: "আগারগাঁও, ঢাকা",
+    timeAgo: "এইমাত্র",
+    rating: 5,
+    ratingLabel: "রক্ত চুইষা খাইসে!",
+    category: "পরিচয় ও পাসপোর্ট (Identity)",
+    items: [
+      { label: "দালাল মামা (বাইরের কন্ট্রাক্ট)", amount: 5000 },
+      { label: "পুলিশ ভেরিফিকেশন ফি", amount: 2000 },
+      { label: "অফিসিয়াল চা-পানি", amount: 500 },
+    ],
+    total: 7500,
+    story:
+      "মামা, পাসপোর্ট করাইতে গিয়া তো পুরাই ফতুর! দালালে কয় ৫ হাজার ছাড়া নাকি ফাইল নড়বই না। লগে আবার পুলিশের চা-পানির খরচ আলাদা। এলাকাটা আগারগাঁও হইলেও পকেট কিন্তু পুরো দেশী স্টাইলে কাটসে!",
+    sames: 0,
+  },
+  {
     id: "1",
     author: "গুলিস্তানের জেমস বন্ড",
     location: "গুলশান সাব-রেজিস্ট্রি",
@@ -30,7 +50,7 @@ export const reviews: Review[] = [
       { label: "দালাল মামা", amount: 1000 },
       { label: "ফাইল মুভমেন্ট ফি", amount: 2500 },
       { label: "চা-নাস্তা", amount: 600 },
-      { label: "স্যারের 'খুশি'", amount: 2500 },
+      { label: "স্যারের 'খু খুশি'", amount: 2500 },
     ],
     total: 6600,
     story:

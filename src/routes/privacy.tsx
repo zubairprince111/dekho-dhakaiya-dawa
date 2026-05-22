@@ -1,11 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
-import { ShieldAlert, UserCheck, Flame, Scale, ArrowLeft } from "lucide-react";
+import { ShieldAlert, UserCheck, Flame, Scale, ArrowLeft, Mail } from "lucide-react";
 
 export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
-      { title: "আইনের চিপা (শর্ত ও প্রাইভেসি) — দেখো" },
+      { title: "আইনের চিপা (শর্ত ও প্রাইভেসি) | দেখো — ‘চা-পানির’ হিসাব!" },
       { name: "description", content: "দেখো অ্যাপের লিগ্যাল ডিসক্লেইমার ও ইউজার প্রাইভেসি পলিসি।" },
     ],
   }),
@@ -84,6 +84,19 @@ function Privacy() {
             </h2>
             <p className="text-sm text-gray-600 leading-relaxed font-semibold">
               এই ওয়েবসাইটে ব্যবহৃত &apos;চা-পানি&apos;, &apos;মিষ্টি&apos;, &apos;খাম&apos;, &apos;চামড়া তোলা&apos;—এইসব শব্দ পুরাপুরি রূপক (Metaphorical) এবং স্যাটায়ার। আমরা শুধু পাবলিকের দেওয়া &apos;সম্মানী&apos; ট্র্যাক করি! কেউ যদি এইগুলা পইড়া সিরিয়াস হইয়া যায় আর নিজের গায়ে মাইখা নেয়, তাইলে সেই দায়ভার তার নিজের।
+            </p>
+          </div>
+
+          {/* Section 5 */}
+          <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-[0_8px_30px_rgb(0,0,0,0.03)] space-y-3">
+            <h2 className="text-base font-extrabold text-gray-800 flex items-center gap-2">
+              <span className="rounded-full bg-violet-50 p-2 text-violet-500">
+                <Mail size={18} strokeWidth={2.4} />
+              </span>
+              সেকশন ৫: ক্যাচাল মেটানো বা যোগাযোগ
+            </h2>
+            <p className="text-sm text-gray-600 leading-relaxed font-semibold">
+              ওস্তাদ, কোনো বিষে বিষাদ বা ক্যাচাল থাকলে, অথবা বড় স্যারের লগে ডিরেক্ট গুজুর-গুজুর করতে চাইলে সরাসরি আমাগো এই মেইল বক্সে গুতা মারেন: <a href="mailto:dekhoobd@gmail.com" className="text-violet-600 hover:underline font-black">dekhoobd@gmail.com</a>। ফালতু চিল্লাচিল্লি না কইরা সুন্দর মতো মেইল মারলে বড় স্যার লাঞ্চের বিরতি শ্যাষ কইরা একটু চোখ বুলায়া দেখতে পারে!
             </p>
           </div>
         </div>

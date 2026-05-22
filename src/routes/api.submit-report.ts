@@ -73,7 +73,13 @@ const CAPTCHA_CHALLENGES = [
 // HTML Tag and Script Sanitization Helper
 function sanitize(str: string): string {
   if (typeof str !== "string") return "";
-  return str.replace(/<[^>]*>/g, "").trim();
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;")
+    .trim();
 }
 
 // Server-side Supabase Client Initialization
@@ -171,7 +177,7 @@ export const Route = createFileRoute("/api/submit-report")({
 
         const rating = Math.max(1, Math.min(5, parseInt(teaCups, 10) || 3));
 
-        let cleanItems = [];
+        let cleanItems: { who: string; amount: number }[] = [];
         if (Array.isArray(items)) {
           cleanItems = items.map((item: any) => ({
             who: sanitize(item.who || "অজ্ঞাত").slice(0, 100),

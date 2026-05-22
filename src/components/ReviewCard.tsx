@@ -56,8 +56,27 @@ export function ReviewCard({ review }: { review: Review }) {
     try {
       setIsSyncing(true);
       
-      // Update state immediately for premium, zero-latency response
       const newCount = samesCount + 1;
+
+      // Synchronize with database via secure API
+      if (isSupabaseConfigured) {
+        const response = await fetch("/api/vote", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            reportId: review.id,
+            newCount: newCount,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to vote");
+        }
+      }
+
+      // Update state immediately for premium, zero-latency response after success
       setSamesCount(newCount);
       setHasVoted(true);
       localStorage.setItem(`voted_same_${review.id}`, "true");
@@ -67,20 +86,11 @@ export function ReviewCard({ review }: { review: Review }) {
         duration: 3000,
       });
 
-      // Synchronize with database if configured
-      if (isSupabaseConfigured) {
-        // Attempt to increment the 'sames' column on this record in Supabase
-        const { error } = await supabase
-          .from("bribe_reports")
-          .update({ sames: newCount })
-          .eq("id", review.id);
-
-        if (error) {
-          console.warn("Could not sync vote to Supabase:", error.message);
-        }
-      }
     } catch (err) {
       console.warn("Error updating vote:", err);
+      toast.error("ওস্তাদ, ভোটটা দেওয়া গেল না!", {
+        description: "সার্ভারে একটু সমস্যা হইছে। একটু পর ট্রাই মারেন।",
+      });
     } finally {
       setIsSyncing(false);
     }
@@ -88,17 +98,25 @@ export function ReviewCard({ review }: { review: Review }) {
 
   return (
     <article className="mx-4 mt-4 rounded-3xl border border-gray-100 bg-white p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-      <header className="flex items-center gap-3">
+      <header className="flex items-start gap-3">
         <Avatar seed={review.author} />
+        {/* Left: author + office name + time */}
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold text-gray-800">{review.author}</p>
-          <p className="truncate text-xs text-gray-500 leading-normal py-0.5">
-            {review.location} • {review.timeAgo}
-          </p>
+          <p className="truncate text-xs font-bold text-gray-600 mt-0.5">{review.location}</p>
+          <span className="text-[10px] text-gray-400">• {review.timeAgo}</span>
         </div>
-        <span className="rounded-full bg-cyan-50 px-2.5 py-1 text-[11px] font-medium text-cyan-700">
-          {review.category}
-        </span>
+        {/* Right: category pill + 📍 area below it */}
+        <div className="flex flex-col items-end gap-0.5 shrink-0">
+          <span className="rounded-full bg-cyan-50 px-2 py-0.5 text-[10px] font-bold text-cyan-700 text-right">
+            {review.category}
+          </span>
+          {review.area && (
+            <p className="text-[11px] font-bold text-gray-500 flex items-center gap-0.5">
+              <span className="text-cyan-600">📍</span>{review.area}
+            </p>
+          )}
+        </div>
       </header>
 
       <div className="mt-3 flex items-center gap-2">
@@ -178,4 +196,3 @@ function ActionBtn({ icon, label, count, hasVoted, onClick, disabled }: ActionBt
     </button>
   );
 }
-

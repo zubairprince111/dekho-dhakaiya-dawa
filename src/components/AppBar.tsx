@@ -5,9 +5,9 @@ export function AppBar() {
   const { open } = useSearch();
 
   return (
-    <header 
+    <header
       className="sticky top-0 z-50 bg-white bg-cover bg-center shadow-sm rounded-b-3xl overflow-hidden"
-      style={{ backgroundImage: "url('/navbar.jpg')" }}
+      style={{ backgroundImage: "url('/navbar.png')" }}
     >
       <div className="flex items-center justify-end px-5 py-3.5">
         <button

@@ -4,11 +4,12 @@ import { LocalRadar } from "@/components/LocalRadar";
 import { ReviewCard } from "@/components/ReviewCard";
 import { useState, useEffect } from "react";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+import { reviews as dummyReviews } from "@/lib/dummy-data";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "দেখো- কাঁচকলা কেমনে খায়" },
+      { title: "দেখো — ‘চা-পানির’ হিসাব!" },
       { name: "description", content: "বাংলাদেশের প্রতিদিনের কোপ-কাহিনী ও সরকারি দফতর রিভিউ।" },
     ],
   }),
@@ -21,6 +22,7 @@ function Index() {
 
   useEffect(() => {
     if (!isSupabaseConfigured) {
+      setReports(dummyReviews);
       setLoading(false);
       return;
     }
@@ -34,7 +36,7 @@ function Index() {
 
         if (error) {
           console.error("Supabase fetch failed", error);
-          setReports([]);
+          setReports(dummyReviews);
         } else if (data && data.length > 0) {
           const mapped = data.map((item: any, index: number) => {
             const timeAgo = item.created_at
@@ -61,6 +63,7 @@ function Index() {
               id: item.id || String(index),
               author: item.author || "অজ্ঞাত পাবলিক",
               location: item.officeName || "সরকারি অফিস",
+              area: item.area || "",
               timeAgo,
               rating: item.teaCups || 3,
               ratingLabel: ratingLabels[item.teaCups] || "চুমুকে চুমুকে কোপ",
@@ -71,13 +74,13 @@ function Index() {
               sames: item.sames !== undefined ? item.sames : 0,
             };
           });
-          setReports(mapped);
+          setReports([...dummyReviews, ...mapped]);
         } else {
-          setReports([]);
+          setReports(dummyReviews);
         }
       } catch (err) {
         console.error("Error fetching Supabase data", err);
-        setReports([]);
+        setReports(dummyReviews);
       } finally {
         setLoading(false);
       }

@@ -104,6 +104,7 @@ function SearchOverlay() {
                 id: item.id || String(index),
                 author: item.author || "অজ্ঞাত পাবলিক",
                 location: item.officeName || "সরকারি অফিস",
+                area: item.area || "",
                 timeAgo: "আজকে",
                 rating: item.teaCups || 3,
                 ratingLabel: ratingLabels[item.teaCups] || "চুমুকে চুমুকে কোপ",

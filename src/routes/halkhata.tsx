@@ -6,7 +6,7 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 export const Route = createFileRoute("/halkhata")({
   head: () => ({
     meta: [
-      { title: "কোথায় কত কোপ — দেখো" },
+      { title: "হালখাতা | দেখো — ‘চা-পানির’ হিসাব!" },
       { name: "description", content: "বাংলাদেশের সরকারি দফতর সমূহের মোট এবং গড় ঘুষের রিয়েল-টাইম এনালিটিক্স।" },
     ],
   }),

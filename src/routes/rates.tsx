@@ -8,7 +8,7 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 export const Route = createFileRoute("/rates")({
   head: () => ({
     meta: [
-      { title: "আজকের বাজার — দেখো" },
+      { title: "আজকের বাজার | দেখো — ‘চা-পানির’ হিসাব!" },
       { name: "description", content: "ঘুষ ও দালালির আজকের গড় বাজারদর।" },
     ],
   }),
