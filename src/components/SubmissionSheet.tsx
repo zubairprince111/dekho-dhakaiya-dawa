@@ -498,6 +498,67 @@ function SubmissionSheet() {
   const [captchaSolved, setCaptchaSolved] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [details, setDetails] = useState("");
+  const [generatedMemoUrl, setGeneratedMemoUrl] = useState<string | null>(null);
+
+  // Auto-generate memo image for iOS/Android offline long press / Web Share API compatibility
+  useEffect(() => {
+    if (showMemo && submittedData) {
+      const timer = setTimeout(async () => {
+        const element = document.getElementById("vip-memo-container");
+        if (!element) return;
+        try {
+          const html2canvasFn = typeof html2canvas === "function"
+            ? html2canvas
+            : (html2canvas as any).default;
+
+          if (typeof html2canvasFn !== "function") return;
+
+          const renderWidth = 375;
+          const clone = element.cloneNode(true) as HTMLElement;
+          
+          // Remove the overlay image from clone to prevent recursive captures
+          const overlayImg = clone.querySelector("img[alt='Memo Receipt']");
+          if (overlayImg) overlayImg.remove();
+
+          clone.style.position = "fixed";
+          clone.style.top = "0";
+          clone.style.left = "-9999px";
+          clone.style.width = renderWidth + "px";
+          clone.style.height = "auto";
+          clone.style.overflow = "visible";
+          document.body.appendChild(clone);
+
+          const canvas = await html2canvasFn(clone, {
+            backgroundColor: "#FDFAF4",
+            scale: 2,
+            useCORS: true,
+            logging: false,
+            allowTaint: false,
+            scrollX: 0,
+            scrollY: 0,
+            windowWidth: renderWidth,
+            width: renderWidth,
+          });
+
+          document.body.removeChild(clone);
+
+          const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
+          if (blob) {
+            const url = URL.createObjectURL(blob);
+            setGeneratedMemoUrl(url);
+          }
+        } catch (err) {
+          console.warn("Auto-generating preview image failed:", err);
+        }
+      }, 600); // Wait for open animation to settle
+      return () => clearTimeout(timer);
+    } else {
+      if (generatedMemoUrl) {
+        URL.revokeObjectURL(generatedMemoUrl);
+      }
+      setGeneratedMemoUrl(null);
+    }
+  }, [showMemo, submittedData]);
 
   // Reset form and pick a random captcha challenge when the sheet opens
   useEffect(() => {
@@ -642,57 +703,92 @@ function SubmissionSheet() {
   }
 
   const downloadMemo = async () => {
-    const element = document.getElementById("vip-memo-container");
-    if (!element) return;
+    toast.info("মেমো ডাউনলোড প্রসেস হচ্ছে... ⏳");
     try {
-      // Resolve html2canvas function robustly in SSR/Vite environments
-      const html2canvasFn = typeof html2canvas === "function"
-        ? html2canvas
-        : (html2canvas as any).default;
+      let blob: Blob | null = null;
+      let memoUrl = generatedMemoUrl;
 
-      if (typeof html2canvasFn !== "function") {
-        throw new Error("html2canvas is not a function or failed to load");
+      if (memoUrl) {
+        // Fetch the blob from the pre-generated Object URL
+        blob = await fetch(memoUrl).then((r) => r.blob());
+      } else {
+        // Fallback: dynamic rendering if not fully generated yet
+        const element = document.getElementById("vip-memo-container");
+        if (!element) throw new Error("vip-memo-container not found");
+
+        const html2canvasFn = typeof html2canvas === "function"
+          ? html2canvas
+          : (html2canvas as any).default;
+
+        if (typeof html2canvasFn !== "function") {
+          throw new Error("html2canvas is not a function or failed to load");
+        }
+
+        const renderWidth = 375;
+        const clone = element.cloneNode(true) as HTMLElement;
+        
+        // Remove transparent overlay image to prevent render artifact issues
+        const overlayImg = clone.querySelector("img[alt='Memo Receipt']");
+        if (overlayImg) overlayImg.remove();
+
+        clone.style.position = "fixed";
+        clone.style.top = "0";
+        clone.style.left = "-9999px";
+        clone.style.width = renderWidth + "px";
+        clone.style.height = "auto";
+        clone.style.overflow = "visible";
+        document.body.appendChild(clone);
+
+        const canvas = await html2canvasFn(clone, {
+          backgroundColor: "#FDFAF4",
+          scale: 2,
+          useCORS: true,
+          logging: false,
+          allowTaint: false,
+          scrollX: 0,
+          scrollY: 0,
+          windowWidth: renderWidth,
+          width: renderWidth,
+        });
+
+        document.body.removeChild(clone);
+
+        blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
+        if (blob) {
+          const url = URL.createObjectURL(blob);
+          setGeneratedMemoUrl(url);
+          memoUrl = url;
+        }
       }
 
-      // Use a consistent standard mobile width for the generated image, 
-      // ensuring perfect proportions, alignment and resolution on any device.
-      const renderWidth = 375;
-      const clone = element.cloneNode(true) as HTMLElement;
-      
-      // Place clone offscreen horizontally (left: -9999px) instead of top: -99999px.
-      // CRITICAL: Do NOT set display: none or visibility: hidden, because
-      // html2canvas will completely ignore rendering hidden elements!
-      clone.style.position = "fixed";
-      clone.style.top = "0";
-      clone.style.left = "-9999px";
-      clone.style.width = renderWidth + "px";
-      clone.style.height = "auto";
-      clone.style.overflow = "visible";
-      document.body.appendChild(clone);
-
-      const canvas = await html2canvasFn(clone, {
-        backgroundColor: "#FDFAF4",
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        allowTaint: false,
-        scrollX: 0,
-        scrollY: 0,
-        windowWidth: renderWidth,
-        width: renderWidth,
-      });
-
-      document.body.removeChild(clone);
-
-      // Export using data URL for maximum cross-browser and mobile device compatibility
-      const imgData = canvas.toDataURL("image/png");
-      if (!imgData || imgData === "data:,") {
-        throw new Error("Canvas export returned empty data");
+      if (!blob || !memoUrl) {
+        throw new Error("মেমো ইমেজ জেনারেট করতে সমস্যা হইসে মামা!");
       }
-      
+
+      const fileName = `ভিআইপি_আপ্যায়ন_বিল_${submittedData?.uniqueId || "bribe"}.png`;
+
+      // 1. Try Native Web Share File API for mobile devices (iOS/Android)
+      if (navigator.canShare && navigator.share) {
+        try {
+          const file = new File([blob], fileName, { type: "image/png" });
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              files: [file],
+              title: "ভিআইপি আপ্যায়ন বিল",
+              text: `ওস্তাদ! ${submittedData?.spot}-এ বড় স্যার ও দালালদের আপ্যায়ন করতে মোট ৳${submittedData?.totalAmount.toLocaleString("bn-BD")} টাকার বিল দিতে হইসে!`,
+            });
+            toast.success("মেমো শেয়ার ও ডাউনলোড অপশন ওপেন হইছে! 📤");
+            return;
+          }
+        } catch (shareErr) {
+          console.log("Native share failed, falling back to direct download.", shareErr);
+        }
+      }
+
+      // 2. Direct Blob URL download fallback (greatly preferred over heavy data URI)
       const link = document.createElement("a");
-      link.href = imgData;
-      link.download = `ভিআইপি_আপ্যায়ন_বিল_${submittedData?.uniqueId || "bribe"}.png`;
+      link.href = memoUrl;
+      link.download = fileName;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -730,6 +826,10 @@ function SubmissionSheet() {
   const handleCloseMemo = () => {
     setShowMemo(false);
     setSubmittedData(null);
+    if (generatedMemoUrl) {
+      URL.revokeObjectURL(generatedMemoUrl);
+    }
+    setGeneratedMemoUrl(null);
     close();
   };
 
@@ -755,7 +855,7 @@ function SubmissionSheet() {
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 28, stiffness: 280 }}
-            className="fixed inset-x-0 bottom-0 z-[70] max-h-[92dvh] overflow-y-auto rounded-t-3xl bg-white p-6 pb-10 shadow-2xl"
+            className="fixed inset-x-0 bottom-0 z-[70] mx-auto w-full max-w-[480px] max-h-[92dvh] overflow-y-auto rounded-t-3xl bg-white p-6 pb-10 shadow-2xl"
           >
             <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-gray-200" />
             <div className="mb-4 flex items-center justify-between">
@@ -783,7 +883,7 @@ function SubmissionSheet() {
                         value={area}
                         onChange={(e) => setArea(e.target.value)}
                         placeholder="যেমন: মিরপুর..."
-                        className="w-full rounded-xl border border-gray-200 bg-white pl-8.5 pr-2.5 py-3 text-xs sm:text-sm text-gray-800 transition placeholder:text-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#00BCD4]/30"
+                        className="w-full rounded-xl border border-gray-200 bg-white pl-8.5 pr-2.5 py-3 text-base sm:text-sm text-gray-800 transition placeholder:text-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#00BCD4]/30"
                       />
                     </div>
                   </div>
@@ -908,7 +1008,7 @@ function SubmissionSheet() {
                       type="date"
                       value={customDate}
                       onChange={(e) => setCustomDate(e.target.value)}
-                      className="w-full rounded-2xl border border-gray-200 bg-gray-50/50 px-4 py-3.5 text-sm text-gray-800 transition focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#00BCD4]/30"
+                      className="w-full rounded-2xl border border-gray-200 bg-gray-50/50 px-4 py-3.5 text-base sm:text-sm text-gray-800 transition focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#00BCD4]/30"
                     />
                   </div>
                 )}
@@ -972,7 +1072,7 @@ function SubmissionSheet() {
                         }}
                         inputMode="numeric"
                         placeholder="মিষ্টির বিল কত? (৳)"
-                        className="rounded-2xl border border-gray-200 bg-gray-50/50 px-4 py-3.5 text-sm placeholder:text-gray-400 transition focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#00BCD4]/30"
+                        className="rounded-2xl border border-gray-200 bg-gray-50/50 px-4 py-3.5 text-base sm:text-sm placeholder:text-gray-400 transition focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#00BCD4]/30"
                       />
                     </div>
                   ))}
@@ -1221,7 +1321,7 @@ function SubmissionSheet() {
 
           {/* Post-Submission "Digital Cash Memo" Overlay Modal */}
           {showMemo && submittedData && (
-            <div className="fixed inset-0 z-[100] flex items-start justify-center bg-black/60 backdrop-blur-sm overflow-y-auto py-8 px-4">
+            <div className="fixed inset-0 z-[100] flex items-start justify-center bg-black/60 backdrop-blur-sm overflow-y-auto py-6 px-2.5 sm:px-4">
               <div
                 className="fixed inset-0 cursor-pointer"
                 onClick={handleCloseMemo}
@@ -1231,16 +1331,26 @@ function SubmissionSheet() {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
                 transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                className="relative flex flex-col items-center max-w-sm w-full bg-[#FAF8F5] rounded-3xl border border-gray-200/50 p-4 sm:p-5 shadow-2xl space-y-4 z-10 select-none"
+                className="relative flex flex-col items-center max-w-sm w-full bg-[#FAF8F5] rounded-3xl border border-gray-200/50 p-3 sm:p-5 shadow-2xl space-y-4 z-10 select-none"
               >
                 {/* Traditional Cash Memo Document */}
                 <div
                   id="vip-memo-container"
-                  className="w-full bg-[#FDFAF4] border-2 border-red-700/60 p-4 font-sans text-red-800 space-y-4 relative overflow-hidden"
+                  className="w-full bg-[#FDFAF4] border-2 border-red-700/60 p-3 sm:p-4 font-sans text-red-800 space-y-4 relative overflow-hidden"
                   style={{
                     backgroundColor: "#FDFAF4",
                   }}
                 >
+                  {/* Absolute Image overlay for native long-press save */}
+                  {generatedMemoUrl && (
+                    <img
+                      src={generatedMemoUrl}
+                      alt="Memo Receipt"
+                      className="absolute inset-0 w-full h-full opacity-0 z-20 cursor-pointer pointer-events-auto select-all"
+                      style={{ WebkitTouchCallout: "default" }}
+                    />
+                  )}
+
                   {/* Paper Grid background effect (Horizontal) */}
                   <div
                     data-html2canvas-ignore="true"
@@ -1346,6 +1456,13 @@ function SubmissionSheet() {
                     বিঃদ্রঃ এই বিল পাবলিকের কথা অনুযায়ী বানানো। আমরা শুধু হিসাব রাখি। পরিশোধিত লেখা না থাকলে কাজ হবে না।
                   </div>
                 </div>
+
+                {/* Visual Long Press instruction helper */}
+                {generatedMemoUrl && (
+                  <p className="text-[10px] font-extrabold text-amber-700 text-center animate-pulse px-2 py-0.5 leading-relaxed">
+                    💡 মামা! সরাসরি ডাউনলোড না হলে মেমোটির ওপর চেপে ধরে ফোনে সেভ করুন!
+                  </p>
+                )}
 
                 {/* Action Buttons */}
                 <div className="w-full space-y-2 pt-2">

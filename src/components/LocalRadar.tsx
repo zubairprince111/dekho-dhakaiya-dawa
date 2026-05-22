@@ -167,7 +167,7 @@ export function LocalRadar({ reports = [] }: { reports?: Review[] }) {
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
               transition={{ type: "spring", damping: 26, stiffness: 220 }}
-              className="fixed inset-x-0 bottom-0 z-50 flex max-h-[80vh] flex-col rounded-t-[32px] bg-[#FAF8F5]/95 backdrop-blur-3xl border-t border-white/50 shadow-2xl pb-6 select-none"
+              className="fixed inset-x-0 bottom-0 z-50 flex max-h-[80vh] flex-col rounded-t-[32px] bg-[#FAF8F5]/95 backdrop-blur-3xl border-t border-white/50 shadow-2xl pb-6 select-none mx-auto max-w-[480px] w-full"
             >
               {/* Handlebar drag anchor */}
               <div 

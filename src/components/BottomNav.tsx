@@ -11,7 +11,7 @@ export function BottomNav() {
   const { pathname } = useLocation();
   const { open } = useSubmissionSheet();
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-100 bg-white/80 backdrop-blur-xl">
+    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-50 border-t border-gray-100 bg-white/80 backdrop-blur-xl">
       <div className="relative grid grid-cols-[1fr_auto_1fr] items-end justify-between px-4 pb-safe pt-2">
         {items.slice(0, 1).map(({ to, label, Icon }) => {
           const active = pathname === to;

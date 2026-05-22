@@ -15,17 +15,17 @@ import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
+    <div className="flex min-h-screen items-center justify-center bg-background px-4 py-8">
+      <div className="w-full max-w-sm text-center">
+        <h1 className="text-5xl sm:text-7xl font-black text-foreground tracking-tight">404</h1>
+        <h2 className="mt-3 text-lg sm:text-xl font-extrabold text-foreground leading-snug">Page not found</h2>
+        <p className="mt-2 text-xs sm:text-sm font-semibold text-muted-foreground leading-relaxed">
           The page you're looking for doesn't exist or has been moved.
         </p>
         <div className="mt-6">
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center justify-center rounded-2xl bg-primary px-5 py-3 text-sm font-extrabold text-primary-foreground transition-all duration-200 active:scale-95 hover:bg-primary/90 shadow-md cursor-pointer"
           >
             Go home
           </Link>
@@ -40,27 +40,30 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   const router = useRouter();
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-xl font-black text-gray-800 leading-normal py-0.5">
-          কোনো একটা ডিশটাপ হইছে মনে হয়।
-        </h1>
-        <p className="mt-2 text-sm font-semibold text-gray-500 leading-normal py-0.5">
-          স্যাররা লাঞ্চে গেছেন বা সার্ভার একটু জ্যাম খাইছে, একটু পর আবার ট্রাই মারেন!
-        </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-3">
+    <div className="flex min-h-screen items-center justify-center bg-background px-4 py-8">
+      <div className="w-full max-w-sm text-center space-y-4">
+        <div className="text-4xl animate-bounce">☕</div>
+        <div className="space-y-1.5">
+          <h1 className="text-lg sm:text-xl font-black text-gray-800 leading-snug">
+            কোনো একটা ডিশটাপ হইছে মনে হয়।
+          </h1>
+          <p className="text-xs sm:text-sm font-semibold text-gray-500 leading-relaxed">
+            স্যাররা লাঞ্চে গেছেন বা সার্ভার একটু জ্যাম খাইছে, একটু পর আবার ট্রাই মারেন!
+          </p>
+        </div>
+        <div className="mt-6 flex flex-wrap justify-center gap-2.5">
           <button
             onClick={() => {
               router.invalidate();
               reset();
             }}
-            className="inline-flex items-center justify-center rounded-2xl bg-amber-600 px-5 py-3 text-sm font-extrabold text-white transition active:scale-95 hover:bg-amber-700 cursor-pointer shadow-md"
+            className="inline-flex items-center justify-center rounded-2xl bg-amber-600 px-4 py-2.5 sm:px-5 sm:py-3 text-xs sm:text-sm font-extrabold text-white transition-all duration-200 active:scale-95 hover:bg-amber-700 cursor-pointer shadow-md"
           >
             আবার একটু টিপ দেন তো।
           </button>
           <a
             href="/"
-            className="inline-flex items-center justify-center rounded-2xl border border-gray-200 bg-white px-5 py-3 text-sm font-extrabold text-gray-700 transition active:scale-95 hover:bg-gray-50 cursor-pointer shadow-sm"
+            className="inline-flex items-center justify-center rounded-2xl border border-gray-200 bg-white px-4 py-2.5 sm:px-5 sm:py-3 text-xs sm:text-sm font-extrabold text-gray-700 transition-all duration-200 active:scale-95 hover:bg-gray-50 cursor-pointer shadow-sm"
           >
             নিজের ডেরায় চলেন ওস্তাদ
           </a>

@@ -181,7 +181,7 @@ function SearchOverlay() {
                     setSelectedOffice(null);
                   }}
                   placeholder="কোন চিপায় কোপ খাইছেন? খুঁজুন..."
-                  className="w-full rounded-xl border border-gray-200 bg-white/50 pl-9 pr-8 py-2.5 text-xs font-semibold text-gray-800 transition placeholder:text-gray-400 focus:border-[#00BCD4] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00BCD4]/10"
+                  className="w-full rounded-xl border border-gray-200 bg-white/50 pl-9 pr-8 py-2.5 text-base sm:text-sm font-semibold text-gray-800 transition placeholder:text-gray-400 focus:border-[#00BCD4] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00BCD4]/10"
                 />
                 {searchQuery && (
                   <button
